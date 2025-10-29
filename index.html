@@ -29,6 +29,59 @@
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #053e91;
+        }
+        
+        .text-primary {
+            color: var(--primary) !important;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background-color: #042c6b;
+            border-color: #042c6b;
+        }
+        
+        .bg-primary {
+            background-color: var(--primary) !important;
+        }
+        
+        .border-primary {
+            border-color: var(--primary) !important;
+        }
+        
+        .section-title::after {
+            background: var(--primary);
+        }
+        
+        .session-option {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .session-option:hover {
+            border-color: var(--primary) !important;
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+        }
+        .session-option.active {
+            border-color: var(--primary) !important;
+            background-color: #e3f2fd;
+        }
+        .contact-option {
+            transition: all 0.3s ease;
+        }
+        .contact-option:hover {
+            background: rgba(255,255,255,0.2) !important;
+            transform: translateX(5px);
+        }
+    </style>
 </head>
 
 <body>
@@ -64,132 +117,25 @@
 <!-- Navbar End -->
 
 
-<!-- Carousel Start -->
+<!-- Hero Section Start -->
 <div class="container-fluid p-0 mb-5" id="home">
-    <div class="owl-carousel header-carousel position-relative">
-        <!-- Slide 1: Hero Section -->
-        <div class="owl-carousel-item position-relative">
-            <img class="img-fluid" src="https://media.licdn.com/dms/image/v2/C5612AQGPmdBGS-zM5w/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1526566496687?e=2147483647&v=beta&t=CnFMkSBZ6zp3GE69TUzN_oxjjSGZnIUsxU5MluKh2g4" alt="Pamela speaking to an audience" style="height: 788px; object-fit: cover;">
-            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: rgba(24, 29, 56, .8);">
-                <div class="container">
-                    <div class="row justify-content-start">
-                        <div class="col-sm-10 col-lg-8">
-                            <h1 class="display-3 text-white animated slideInDown">Leadership that Connects.<br>Hospitality that Transforms.</h1>
-                            <p class="fs-5 text-white mb-4 pb-2">With over 20 years in luxury hospitality and global strategy, Pamela M. Robinson delivers transformative training that blends emotional intelligence with measurable business results.</p>
-                            <a href="#contact" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Book Pamela to Speak</a>
-                            <a href="#services" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Our Services</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Slide 2: Corporate Training Focus -->
-        <div class="owl-carousel-item position-relative">
-            <img class="img-fluid" src="img/pam2.jpeg" alt="Corporate training session" style="height: 788px; object-fit: cover;">
-            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: rgba(24, 29, 56, .7);">
-                <div class="container">
-                    <div class="row justify-content-start">
-                        <div class="col-sm-10 col-lg-8">
-                            <h5 class="text-primary text-uppercase mb-3 animated slideInDown">Corporate & Employee Training</h5>
-                            <h1 class="display-3 text-white animated slideInDown">Empowering Teams with <span class="text-warning">Emotional Intelligence</span></h1>
-                            <p class="fs-5 text-white mb-4 pb-2">Transform your workplace culture with leadership tools that drive measurable results. Companies that invest in our training see a 17% increase in productivity and significant improvements in team collaboration.</p>
-                            <a href="#services" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft"><i class="fas fa-users me-2"></i>Training Programs</a>
-                            <a href="#contact" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Get Consultation</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Slide 3: Speaking Focus -->
-        <div class="owl-carousel-item position-relative">
-            <img class="img-fluid" src="img/h1.jpeg" alt="Pamela on stage speaking" style="height: 788px; object-fit: cover;">
-            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: rgba(24, 29, 56, .7);">
-                <div class="container">
-                    <div class="row justify-content-start">
-                        <div class="col-sm-10 col-lg-8">
-                            <h5 class="text-primary text-uppercase mb-3 animated slideInDown">Speaking & Keynotes</h5>
-                            <h1 class="display-3 text-white animated slideInDown">Inspire Action & <span class="text-primary">Elevate Experience</span></h1>
-                            <p class="fs-5 text-white mb-4 pb-2">From international hospitality conferences to corporate leadership summits, Pamela delivers keynotes and workshops that blend strategic insight with the human touch that creates unforgettable service cultures.</p>
-                            <a href="#events" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft"><i class="fas fa-microphone me-2"></i>Speaking Topics</a>
-                            <a href="#contact" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Book Speaking</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Slide 4: Sales & Marketing Focus -->
-        <div class="owl-carousel-item position-relative">
-            <img class="img-fluid" src="https://st.depositphotos.com/2578749/2937/i/450/depositphotos_29370529-stock-photo-a-luxury-all-inclusive-beach.jpg" alt="Luxury hotel branding" style="height: 788px; object-fit: cover;">
-            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: rgba(24, 29, 56, .7);">
-                <div class="container">
-                    <div class="row justify-content-start">
-                        <div class="col-sm-10 col-lg-8">
-                            <h5 class="text-primary text-uppercase mb-3 animated slideInDown">Sales & Marketing Support</h5>
-                            <h1 class="display-3 text-white animated slideInDown">Grow Through <span class="text-warning">Strategic Storytelling</span></h1>
-                            <p class="fs-5 text-white mb-4 pb-2">Help your hospitality business stand out in a competitive market. We provide sales strategies and marketing frameworks that connect with customers on an emotional level while driving revenue growth.</p>
-                            <a href="#services" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft"><i class="fas fa-chart-line me-2"></i>Sales Solutions</a>
-                            <a href="#contact" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Boost Revenue</a>
-                        </div>
+    <div class="position-relative">
+        <img class="img-fluid" src="https://media.licdn.com/dms/image/v2/C5612AQGPmdBGS-zM5w/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1526566496687?e=2147483647&v=beta&t=CnFMkSBZ6zp3GE69TUzN_oxjjSGZnIUsxU5MluKh2g4" alt="Pamela speaking to an audience" style="height: 788px; width: 100%; object-fit: cover;">
+        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: rgba(24, 29, 56, .8);">
+            <div class="container">
+                <div class="row justify-content-start">
+                    <div class="col-sm-10 col-lg-8">
+                        <h1 class="display-3 text-white animated slideInDown">The Heart to Lead. The Power to Train. The Courage to Inspire.</h1>
+                        <p class="fs-5 text-white mb-4 pb-2">Pamela Robinson - Making the impossible possible through transformative speaking, corporate training, and leadership development.</p>
+                        <a href="#contact" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Book Pamela to Speak</a>
+                        <a href="#about" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Learn More</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<!-- Carousel End -->
-
-
-    <!-- Goals Start -->
-<div class="container-xxl py-5">
-    <div class="container">
-        <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
-            <h4 class="text-primary">Our Impact</h4>
-            <h1 class="mb-4">What You Achieve With Fusion Force</h1>
-        </div>
-        <div class="row g-4 p-4" style="border: 2px solid #e9ecef; border-radius: 20px; background: #f8f9fa;">
-            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
-                <div class="service-item text-center pt-3">
-                    <div class="p-3">
-                        <i class="fas fa-2x fa-star text-primary mb-3"></i>
-                        <h5 class="mb-2" style="font-size: 1.1rem;">Elevated Guest Experience</h5>
-                        <p style="font-size: 0.9rem; line-height: 1.4;">Transform customer interactions into loyal relationships with measurable improvements in satisfaction scores and service quality</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
-                <div class="service-item text-center pt-3">
-                    <div class="p-3">
-                        <i class="fas fa-2x fa-users-cog text-primary mb-3"></i>
-                        <h5 class="mb-2" style="font-size: 1.1rem;">Empowered Leadership</h5>
-                        <p style="font-size: 0.9rem; line-height: 1.4;">Develop leaders who inspire with empathy-driven strategies, improved team collaboration, and sustainable growth</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s">
-                <div class="service-item text-center pt-3">
-                    <div class="p-3">
-                        <i class="fas fa-2x fa-chart-line text-primary mb-3"></i>
-                        <h5 class="mb-2" style="font-size: 1.1rem;">Increased Revenue</h5>
-                        <p style="font-size: 0.9rem; line-height: 1.4;">Drive sales growth through authentic relationship-building, strategic storytelling, and ethical upselling techniques</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.7s">
-                <div class="service-item text-center pt-3">
-                    <div class="p-3">
-                        <i class="fas fa-2x fa-heart text-primary mb-3"></i>
-                        <h5 class="mb-2" style="font-size: 1.1rem;">Stronger Team Culture</h5>
-                        <p style="font-size: 0.9rem; line-height: 1.4;">Create workplaces where emotional intelligence thrives, boosting morale and reducing turnover</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Goals End -->
+<!-- Hero Section End -->
 
 
     <!-- About Start -->
@@ -198,112 +144,135 @@
         <div class="row g-5">
             <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s" style="min-height: 400px;">
                 <div class="position-relative h-100">
-                    <img class="img-fluid position-absolute w-100 h-100" src="img/pam2.jpeg" alt="Pamela M. Robinson - Founder of Fusion Force" style="object-fit: cover;">
+                    <img class="img-fluid position-absolute w-100 h-100" src="img/pam2.jpg" alt="Pamela Robinson - Founder of Fusion Force" style="object-fit: cover;">
                 </div>
             </div>
             <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.3s">
-                <h6 class="section-title bg-white text-start text-primary pe-3">About Us</h6>
-                <h1 class="mb-4">Welcome to Fusion Force</h1>
-                <p class="mb-4">Fusion Force is a premier corporate training and leadership development consultancy founded by Pamela M. Robinson. We specialize in transforming workplace culture by equipping teams and executives with the strategies they need to excel in today's competitive landscape.</p>
-                <p class="mb-4">Our approach is rooted in over two decades of leadership in global luxury hospitality, blended with proven methodologies in emotional intelligence and strategic growth.</p>
+                <h6 class="section-title bg-white text-start text-primary pe-3">About Pamela</h6>
+                <h1 class="mb-4">Pamela Robinson</h1>
+                <p class="mb-4">Pamela Robinson is a keynote speaker, corporate and leadership trainer, and a recognized expert in sales and marketing support for hospitality companies. Her career spans Asia, North America, the United States, and the Caribbean, where she has served as a General Manager, Director of Sales, and consultant for leading hotel operations and hospitality brands.</p>
+                <p class="mb-4">She is the founder of <strong>Fusion Force</strong>, a transformational company that specializes in speaking engagements, corporate and leadership training, and strategic support for hospitality businesses seeking to elevate their sales and marketing performance.</p>
                 <div class="row gy-2 gx-4 mb-4">
                     <div class="col-sm-6">
-                        <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>20+ Years Expertise</p>
+                        <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Keynote Speaker</p>
                     </div>
                     <div class="col-sm-6">
-                        <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Luxury Hospitality Background</p>
+                        <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Leadership Trainer</p>
                     </div>
                     <div class="col-sm-6">
-                        <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Empathy-Driven Methodology</p>
+                        <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Hospitality Expert</p>
                     </div>
                     <div class="col-sm-6">
-                        <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Measurable Results</p>
+                        <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Global Experience</p>
                     </div>
                     <div class="col-sm-6">
-                        <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Global Client Experience</p>
+                        <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Trained by Les Brown</p>
                     </div>
                     <div class="col-sm-6">
-                        <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Certified Expert Leadership</p>
+                        <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Author of Leading with the Heart</p>
                     </div>
                 </div>
-                <a class="btn btn-primary py-3 px-5 mt-2" href="#contact">Start Your Transformation</a>
+                <a class="btn btn-primary py-3 px-5 mt-2" href="#contact">Book Pamela</a>
             </div>
         </div>
     </div>
 </div>
 <!-- About End -->
 
-
 <!-- Services Start -->
 <div class="container-xxl py-5" id="services">
     <div class="container">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h6 class="section-title bg-white text-center text-primary px-3">Our Expertise</h6>
-            <h1 class="mb-5">Signature Training & Development Programs</h1>
+            <h6 class="section-title bg-white text-center text-primary px-3">Transform Your Organization</h6>
+            <h1 class="mb-5">Signature Services</h1>
+            <p class="lead mb-5">Inspiring talks. Transformative training. Strategic guidance.</p>
         </div>
-        <div class="row g-4 justify-content-center">
-            <!-- Service 1: Customer Service Excellence -->
+
+        <!-- Key Services Grid -->
+        <div class="row g-4">
+            <!-- Keynote Speaking -->
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-                <div class="course-item bg-light">
-                    <div class="position-relative overflow-hidden">
-                        <img class="img-fluid" src="https://www.cxtoday.com/wp-content/uploads/2020/03/Top-5-Tips-CX-Excellence.jpg" alt="Customer Service Excellence Training">
-                        <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
-                            <a href="#contact" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 30px 0 0 30px;">Learn More</a>
-                            <a href="#contact" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Book Now</a>
-                        </div>
+                <div class="service-simple text-center p-4 h-100">
+                    <div class="service-icon mb-4">
+                        <i class="fas fa-microphone fa-3x text-primary"></i>
                     </div>
-                    <div class="text-center p-4 pb-0">
-                        <h5 class="mb-3">Customer Service Excellence</h5>
-                        <p class="mb-3" style="font-size: 0.9rem; line-height: 1.4;">We blend luxury hospitality standards with emotional intelligence to transform customer interactions into loyal relationships through role-playing and real-world scenarios.</p>
+                    <h4 class="mb-3">Keynote Speaking</h4>
+                    <p class="mb-4">Inspire your team with powerful messages that drive action and create lasting change.</p>
+                    <div class="service-topics">
+                        <span class="topic-tag">Emotional Intelligence</span>
+                        <span class="topic-tag">Leadership Trust</span>
+                        <span class="topic-tag">Guest Experience</span>
+                        <span class="topic-tag">Women in Leadership</span>
                     </div>
-                    <div class="d-flex border-top">
-                        <small class="flex-fill text-center border-end py-2"><i class="fa fa-handshake text-primary me-2"></i>Loyal Customers</small>
-                        <small class="flex-fill text-center border-end py-2"><i class="fa fa-clock text-primary me-2"></i>Flexible Hours</small>
-                        <small class="flex-fill text-center py-2"><i class="fa fa-chart-line text-primary me-2"></i>17% ROI</small>
-                    </div>
+                    <a href="#contact" class="btn btn-primary mt-3">Book Pamela</a>
                 </div>
             </div>
 
-            <!-- Service 2: Leadership Development -->
+            <!-- Corporate Training -->
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.2s">
+                <div class="service-simple text-center p-4 h-100">
+                    <div class="service-icon mb-4">
+                        <i class="fas fa-users fa-3x text-primary"></i>
+                    </div>
+                    <h4 class="mb-3">Corporate Training</h4>
+                    <p class="mb-4">Develop your team with proven frameworks that boost performance and engagement.</p>
+                    <div class="service-topics">
+                        <span class="topic-tag">Leadership Development</span>
+                        <span class="topic-tag">Customer Service Excellence</span>
+                        <span class="topic-tag">Team Collaboration</span>
+                        <span class="topic-tag">EQ Training</span>
+                    </div>
+                    <a href="#contact" class="btn btn-primary mt-3">Train My Team</a>
+                </div>
+            </div>
+
+            <!-- Strategic Consulting -->
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
-                <div class="course-item bg-light">
-                    <div class="position-relative overflow-hidden">
-                        <img class="img-fluid" src="https://media.licdn.com/dms/image/v2/D5612AQEHZ6UIGwiEAg/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1696247033950?e=2147483647&v=beta&t=hbH3InX2CaenHy00VrZYQ1afdoofc8Fdtse7ijlYYS8" alt="Leadership Development Training">
-                        <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
-                            <a href="#contact" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 30px 0 0 30px;">Learn More</a>
-                            <a href="#contact" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Book Now</a>
-                        </div>
+                <div class="service-simple text-center p-4 h-100">
+                    <div class="service-icon mb-4">
+                        <i class="fas fa-chart-line fa-3x text-primary"></i>
                     </div>
-                    <div class="text-center p-4 pb-0">
-                        <h5 class="mb-3">Leadership Development</h5>
-                        <p class="mb-3" style="font-size: 0.9rem; line-height: 1.4;">Our empathy-driven approach cultivates leaders who inspire through strategic planning workshops, conflict resolution exercises, and team empowerment frameworks.</p>
+                    <h4 class="mb-3">Strategic Consulting</h4>
+                    <p class="mb-4">Elevate your business with expert guidance tailored to your unique challenges.</p>
+                    <div class="service-topics">
+                        <span class="topic-tag">Sales Strategy</span>
+                        <span class="topic-tag">Culture Transformation</span>
+                        <span class="topic-tag">Hospitality Excellence</span>
+                        <span class="topic-tag">Revenue Growth</span>
                     </div>
-                    <div class="d-flex border-top">
-                        <small class="flex-fill text-center border-end py-2"><i class="fa fa-users text-primary me-2"></i>Team Empowerment</small>
-                        <small class="flex-fill text-center border-end py-2"><i class="fa fa-clock text-primary me-2"></i>Flexible Hours</small>
-                        <small class="flex-fill text-center py-2"><i class="fa fa-heart text-primary me-2"></i>EQ Growth</small>
-                    </div>
+                    <a href="#contact" class="btn btn-primary mt-3">Get Expert Advice</a>
                 </div>
             </div>
+        </div>
 
-            <!-- Service 3: Hospitality & Guest Experience -->
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-                <div class="course-item bg-light">
-                    <div class="position-relative overflow-hidden">
-                        <img class="img-fluid" src="https://www.collidu.com/media/catalog/product/img/5/d/5d52607e95d6a05a0d5819b04751b15cf4d404be752880cdef661280494e22eb/customer-experience-flywheel-slide4.png" alt="Hospitality & Guest Experience Training">
-                        <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
-                            <a href="#contact" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 30px 0 0 30px;">Learn More</a>
-                            <a href="#contact" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Book Now</a>
+        <!-- Impact Highlights -->
+        <div class="row mt-5 pt-5">
+            <div class="col-12 text-center">
+                <h3 class="mb-4">Proven Results</h3>
+                <div class="row g-4">
+                    <div class="col-md-3">
+                        <div class="impact-stat">
+                            <h2 class="text-primary mb-1">25%</h2>
+                            <p class="mb-0">Productivity Increase</p>
                         </div>
                     </div>
-                    <div class="text-center p-4 pb-0">
-                        <h5 class="mb-3">Hospitality & Guest Experience</h5>
-                        <p class="mb-3" style="font-size: 0.9rem; line-height: 1.4;">We elevate service to an art form through personalized coaching, professional presentation techniques, and integrating the human touch in a digital world.</p>
+                    <div class="col-md-3">
+                        <div class="impact-stat">
+                            <h2 class="text-primary mb-1">17%</h2>
+                            <p class="mb-0">Satisfaction Boost</p>
+                        </div>
                     </div>
-                    <div class="d-flex border-top">
-                        <small class="flex-fill text-center border-end py-2"><i class="fa fa-concierge-bell text-primary me-2"></i>5-Star Service</small>
-                        <small class="flex-fill text-center border-end py-2"><i class="fa fa-clock text-primary me-2"></i>Flexible Hours</small>
-                        <small class="flex-fill text-center py-2"><i class="fa fa-award text-primary me-2"></i>Brand Loyalty</small>
+                    <div class="col-md-3">
+                        <div class="impact-stat">
+                            <h2 class="text-primary mb-1">40%</h2>
+                            <p class="mb-0">Team Collaboration</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="impact-stat">
+                            <h2 class="text-primary mb-1">100+</h2>
+                            <p class="mb-0">Organizations Transformed</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -312,32 +281,82 @@
 </div>
 <!-- Services End -->
 
+<style>
+.service-simple {
+    border: 2px solid #f8f9fa;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.service-simple:hover {
+    border-color: var(--primary);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(5, 62, 145, 0.1);
+}
+
+.service-icon {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.topic-tag {
+    display: inline-block;
+    background: #f8f9fa;
+    color: var(--primary);
+    padding: 4px 12px;
+    margin: 4px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.impact-stat {
+    padding: 20px;
+}
+
+.impact-stat h2 {
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    .service-simple {
+        margin-bottom: 20px;
+    }
+    
+    .impact-stat {
+        margin-bottom: 30px;
+    }
+}
+</style>
 
     <!-- Categories Start -->
     <div class="container-xxl py-5 category"  id="events">
         <div class="container">
             <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
                 <h6 class="section-title bg-white text-center text-primary px-3">Gallery</h6>
-                <h1 class="mb-5">Events & Gallery</h1>
+                <h1 class="mb-5">Past Speaking Engagements</h1>
             </div>
             <div class="row g-3">
                 <div class="col-lg-7 col-md-6">
                     <div class="row g-3">
                         <div class="col-lg-12 col-md-12 wow zoomIn" data-wow-delay="0.1s">
                             <a class="position-relative d-block overflow-hidden" href="">
-                                <img class="img-fluid" src="img/h1.jpeg" alt="">
+                                <img class="img-fluid" src="https://www.aia.org/sites/default/files/styles/16_9_1300x731/public/2024-05/wls_091323_1054_sm.jpg?h=df44d994&itok=hFe7zuaR" alt="">
                                 <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin: 1px;">
-                                    <h5 class="m-0">Hotel Bethlehem</h5>
-                                    <small class="text-primary">Our Partners</small>
+                                    <h5 class="m-0">Corporate Leadership Summits</h5>
+                                    <small class="text-primary">Leadership Events</small>
                                 </div>
                             </a>
                         </div>
                         <div class="col-lg-6 col-md-12 wow zoomIn" data-wow-delay="0.3s">
                             <a class="position-relative d-block overflow-hidden" href="">
-                                <img class="img-fluid" src="https://st.depositphotos.com/2578749/2937/i/450/depositphotos_29370529-stock-photo-a-luxury-all-inclusive-beach.jpg" alt="">
+                                <img class="img-fluid" src="https://movingwomenempowerment.com/wp-content/uploads/2021/03/WomenlOGOneeww.png" alt="">
                                 <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin: 1px;">
-                                    <h5 class="m-0">Beach Resorts Miami</h5>
-                                    <small class="text-primary">Clients Space</small>
+                                    <h5 class="m-0">Women's Empowerment Conferences</h5>
+                                    <small class="text-primary">Empowerment Events</small>
                                 </div>
                             </a>
                         </div>
@@ -356,8 +375,8 @@
                     <a class="position-relative d-block h-100 overflow-hidden" href="">
                         <img class="img-fluid position-absolute w-100 h-100" src="img/pam1.jpeg" alt="" style="object-fit: cover;">
                         <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin:  1px;">
-                            <h5 class="m-0">Director Pamela Robinson</h5>
-                            <small class="text-primary">Founders</small>
+                            <h5 class="m-0">Pamela Robinson</h5>
+                            <small class="text-primary">Keynote Speaker</small>
                         </div>
                     </a>
                 </div>
@@ -373,47 +392,37 @@
 <div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s" id="testimonials">
     <div class="container">
         <div class="text-center">
-            <h6 class="section-title bg-white text-center text-primary px-3">Client Success Stories</h6>
-            <h1 class="mb-5">Proven Impact, Measurable Results</h1>
+            <h6 class="section-title bg-white text-center text-primary px-3">What Audiences Say</h6>
+            <h1 class="mb-5">Client Testimonials</h1>
         </div>
         <div class="owl-carousel testimonial-carousel position-relative">
-            <!-- Merriweather Marriott Testimonial -->
+            <!-- IMEX America Testimonial -->
             <div class="testimonial-item text-center">
-                <img class="border rounded-circle p-2 mx-auto mb-3" src="img/testimonial-merriweather.jpg" style="width: 80px; height: 80px;" alt="Director of Rooms">
-                <h5 class="mb-0">Director of Rooms</h5>
-                <p>Merriweather Marriott Autograph Collection</p>
+                <img class="border rounded-circle p-2 mx-auto mb-3" src="data:image/png;base64,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" style="width: 80px; height: 80px;" alt="Event Organizer">
+                <h5 class="mb-0">Event Organizer</h5>
+                <p>IMEX America</p>
                 <div class="testimonial-text bg-light text-center p-4">
-                <p class="mb-0">"Pamela is a thought leader in her field, seamlessly combining Forbes 5-star training standards with Marriott's best practices. Her training led to a measurable improvement in our guest satisfaction scores, placing us among the top 10 Marriott properties."</p>
+                <p class="mb-0">"Pamela doesn't just speak, she transforms. Her sessions ignite courage, clarity, and connection."</p>
                 </div>
             </div>
             
-            <!-- Goodstone Inn Testimonial -->
+            <!-- Luxury Hotel Group Testimonial -->
             <div class="testimonial-item text-center">
-                <img class="border rounded-circle p-2 mx-auto mb-3" src="img/testimonial-goodstone.jpg" style="width: 80px; height: 80px;" alt="General Manager">
-                <h5 class="mb-0">General Manager</h5>
-                <p>Goodstone Inn & Restaurant</p>
+                <img class="border rounded-circle p-2 mx-auto mb-3" src="data:image/png;base64,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" style="width: 80px; height: 80px;" alt="Vice President of Sales">
+                <h5 class="mb-0">Vice President of Sales</h5>
+                <p>Luxury Hotel Group</p>
                 <div class="testimonial-text bg-light text-center p-4">
-                <p class="mb-0">"Pamela exceeded every expectation. Her professionalism, engaging delivery, and ability to connect with team members at every level made the training both impactful and memorable. The team is still talking about how thought-provoking and transformative the training was."</p>
+                <p class="mb-0">"Her energy is unmatched, our team left inspired and aligned."</p>
                 </div>
             </div>
             
             <!-- Russian Conference Testimonial -->
             <div class="testimonial-item text-center">
-                <img class="border rounded-circle p-2 mx-auto mb-3" src="img/testimonial-russian-conf.jpg" style="width: 80px; height: 80px;" alt="Development Director">
+                <img class="border rounded-circle p-2 mx-auto mb-3" src="data:image/jpeg;base64,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" style="width: 80px; height: 80px;" alt="Development Director">
                 <h5 class="mb-0">Development Director</h5>
                 <p>Russian Hospitality Awards</p>
                 <div class="testimonial-text bg-light text-center p-4">
-                <p class="mb-0">"Pamela was exceptionally well-spoken, engaging, and demonstrated a deep understanding of the hospitality industry. Her ability to connect with the audience made her session both impactful and memorable. Her professionalism reflects the qualities of a world-class presenter."</p>
-                </div>
-            </div>
-            
-            <!-- Department of Justice Testimonial -->
-            <div class="testimonial-item text-center">
-                <img class="border rounded-circle p-2 mx-auto mb-3" src="img/testimonial-doj.jpg" style="width: 80px; height: 80px;" alt="DOJ Official">
-                <h5 class="mb-0">Department of Justice</h5>
-                <p>Government Agency</p>
-                <div class="testimonial-text bg-light text-center p-4">
-                <p class="mb-0">"Pamela exceeded every expectation. Her workshop was dynamic, inclusive, and transformative. The impact on our team's collaboration and communication was immediate and lasting."</p>
+                <p class="mb-0">"Pamela was exceptionally well-spoken, engaging, and demonstrated a deep understanding of the hospitality industry. Her ability to connect with the audience made her session both impactful and memorable."</p>
                 </div>
             </div>
         </div>
@@ -426,9 +435,9 @@
 <div class="container-xxl py-5" id="contact">
     <div class="container">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h6 class="section-title bg-white text-center text-primary px-3">Begin Your Journey</h6>
-            <h1 class="mb-5">Schedule Your Transformation Session</h1>
-            <p class="mb-4">Let's craft a custom experience that elevates your team's performance and drives measurable growth.</p>
+            <h6 class="section-title bg-white text-center text-primary px-3">Book Pamela</h6>
+            <h1 class="mb-5">Schedule Your Speaking Engagement</h1>
+            <p class="mb-4">Let's discuss how Pamela can inspire and transform your next event.</p>
         </div>
         
         <div class="row g-5 align-items-stretch">
@@ -443,7 +452,7 @@
                         </div>
                         <div>
                             <h6 class="mb-1">Quick Booking</h6>
-                            <p class="mb-0">Select your preferred session type</p>
+                            <p class="mb-0">Select your preferred engagement type</p>
                         </div>
                     </div>
                     
@@ -463,7 +472,7 @@
                         </div>
                         <div>
                             <h6 class="mb-1">Customized Approach</h6>
-                            <p class="mb-0">Tailored to your goals</p>
+                            <p class="mb-0">Tailored to your event</p>
                         </div>
                     </div>
                     
@@ -489,37 +498,7 @@
             <!-- Booking Form -->
             <div class="col-lg-8 wow fadeInUp" data-wow-delay="0.3s">
                 <div class="bg-light rounded p-5 h-100">
-                    <form id="transformationForm" class="needs-validation" novalidate>
-                        <!-- Session Type Selection -->
-                        <div class="row mb-4">
-                            <div class="col-12">
-                                <h5 class="text-primary mb-3">Choose Your Session Type</h5>
-                                <div class="row g-3">
-                                    <div class="col-md-4">
-                                        <div class="session-option text-center p-3 border rounded cursor-pointer">
-                                            <i class="fas fa-lightbulb fa-2x text-primary mb-2"></i>
-                                            <h6 class="mb-1">Discovery Call</h6>
-                                            <small>30 min • Free</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="session-option text-center p-3 border rounded cursor-pointer">
-                                            <i class="fas fa-chalkboard-teacher fa-2x text-primary mb-2"></i>
-                                            <h6 class="mb-1">Strategy Session</h6>
-                                            <small>60 min • Custom Quote</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="session-option text-center p-3 border rounded cursor-pointer">
-                                            <i class="fas fa-users fa-2x text-primary mb-2"></i>
-                                            <h6 class="mb-1">Team Workshop</h6>
-                                            <small>Half Day • Custom Quote</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
+                    <form id="bookingForm" class="needs-validation" novalidate>
                         <div class="row g-4">
                             <div class="col-md-6">
                                 <div class="form-floating">
@@ -544,39 +523,24 @@
                                 </div>
                             </div>
                             
-                            <div class="col-md-6">
+                            <div class="col-12">
                                 <div class="form-floating">
-                                    <select class="form-select" id="industry" required>
-                                        <option value="" selected disabled>Select your industry</option>
-                                        <option value="hospitality">Hospitality & Tourism</option>
-                                        <option value="corporate">Corporate Business</option>
-                                        <option value="government">Government Agency</option>
-                                        <option value="healthcare">Healthcare</option>
-                                        <option value="education">Education</option>
-                                        <option value="other">Other</option>
+                                    <select class="form-select" id="eventType" required>
+                                        <option value="" selected disabled>Select event type</option>
+                                        <option value="keynote">Keynote Speech</option>
+                                        <option value="workshop">Workshop</option>
+                                        <option value="training">Corporate Training</option>
+                                        <option value="consultation">Consultation</option>
                                     </select>
-                                    <label for="industry">Industry Focus *</label>
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <select class="form-select" id="urgency">
-                                        <option value="" selected disabled>Select urgency level</option>
-                                        <option value="immediate">Immediate (Within 2 weeks)</option>
-                                        <option value="soon">Soon (1-2 months)</option>
-                                        <option value="planning">Planning Phase (3-6 months)</option>
-                                        <option value="exploring">Just Exploring Options</option>
-                                    </select>
-                                    <label for="urgency">Project Timeline</label>
+                                    <label for="eventType">Event Type *</label>
                                 </div>
                             </div>
                             
                             <div class="col-12">
                                 <div class="form-floating">
-                                    <textarea class="form-control" placeholder="Describe your current challenge and desired outcome..." id="challenge" style="height: 120px" required></textarea>
-                                    <label for="challenge">What challenge would you like to overcome? *</label>
-                                    <div class="invalid-feedback">Please describe your challenge.</div>
+                                    <textarea class="form-control" placeholder="Tell us about your event and what you hope to achieve..." id="eventDetails" style="height: 120px" required></textarea>
+                                    <label for="eventDetails">Event Details *</label>
+                                    <div class="invalid-feedback">Please describe your event.</div>
                                 </div>
                             </div>
                             
@@ -584,17 +548,17 @@
                                 <div class="form-check mb-3">
                                     <input class="form-check-input" type="checkbox" id="agreeTerms" required>
                                     <label class="form-check-label" for="agreeTerms">
-                                        I agree to receive communications about my consultation and relevant insights from Fusion Force
+                                        I agree to receive communications about my booking and relevant insights from Fusion Force
                                     </label>
                                     <div class="invalid-feedback">You must agree before submitting.</div>
                                 </div>
                                 
                                 <button class="btn btn-primary btn-lg w-100 py-3" type="submit">
-                                    <i class="fas fa-rocket me-2"></i>Launch Transformation Session
+                                    <i class="fas fa-rocket me-2"></i>Book Pamela
                                 </button>
                                 
                                 <div class="text-center mt-3">
-                                    <small class="text-muted">We'll respond within 24 hours to confirm your session</small>
+                                    <small class="text-muted">We'll respond within 24 hours to confirm your booking</small>
                                 </div>
                             </div>
                         </div>
@@ -606,43 +570,12 @@
 </div>
 <!-- Consultation Booking End -->
 
-<style>
-.session-option {
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-.session-option:hover {
-    border-color: #0d6efd !important;
-    background-color: #f8f9fa;
-    transform: translateY(-2px);
-}
-.session-option.active {
-    border-color: #0d6efd !important;
-    background-color: #e3f2fd;
-}
-.contact-option {
-    transition: all 0.3s ease;
-}
-.contact-option:hover {
-    background: rgba(255,255,255,0.2) !important;
-    transform: translateX(5px);
-}
-</style>
-
 <script>
-// Session type selection
-document.querySelectorAll('.session-option').forEach(option => {
-    option.addEventListener('click', function() {
-        document.querySelectorAll('.session-option').forEach(opt => opt.classList.remove('active'));
-        this.classList.add('active');
-    });
-});
-
 // Form validation
 (function() {
     'use strict';
     window.addEventListener('load', function() {
-        var form = document.getElementById('transformationForm');
+        var form = document.getElementById('bookingForm');
         form.addEventListener('submit', function(event) {
             if (form.checkValidity() === false) {
                 event.preventDefault();
@@ -650,9 +583,8 @@ document.querySelectorAll('.session-option').forEach(option => {
             } else {
                 event.preventDefault();
                 // Simulate form submission
-                alert('Thank you! Your transformation session request has been received. We will contact you within 24 hours to confirm the details.');
+                alert('Thank you! Your booking request has been received. We will contact you within 24 hours to confirm the details.');
                 form.reset();
-                document.querySelectorAll('.session-option').forEach(opt => opt.classList.remove('active'));
             }
             form.classList.add('was-validated');
         }, false);
@@ -666,10 +598,10 @@ document.querySelectorAll('.session-option').forEach(option => {
         <div class="row g-5">
             <div class="col-lg-3 col-md-6">
                 <h4 class="text-white mb-3">Quick Links</h4>
-                <a class="btn btn-link" href="#about">About Us</a>
-                <a class="btn btn-link" href="#services">Our Services</a>
-                <a class="btn btn-link" href="#testimonials">Success Stories</a>
-                <a class="btn btn-link" href="#events">Events</a>
+                <a class="btn btn-link" href="#about">About Pamela</a>
+                <a class="btn btn-link" href="#services">Speaking Topics</a>
+                <a class="btn btn-link" href="#testimonials">Testimonials</a>
+                <a class="btn btn-link" href="#events">Past Events</a>
                 <a class="btn btn-link" href="#contact">Contact Us</a>
             </div>
             <div class="col-lg-3 col-md-6">
@@ -685,7 +617,7 @@ document.querySelectorAll('.session-option').forEach(option => {
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
-                <h4 class="text-white mb-3">Training Gallery</h4>
+                <h4 class="text-white mb-3">Speaking Gallery</h4>
                 <div class="row g-2 pt-2">
                     <div class="col-4">
                         <img class="img-fluid bg-light p-1" src="https://blogs.sussex.ac.uk/business-school/files/2018/11/IMG_0385.jpg" alt="Interactive Workshop">
@@ -709,7 +641,7 @@ document.querySelectorAll('.session-option').forEach(option => {
             </div>
             <div class="col-lg-3 col-md-6">
                 <h4 class="text-white mb-3">Insights & Updates</h4>
-                <p>Subscribe for exclusive training tips, industry insights, and updates on our upcoming speaking engagements.</p>
+                <p>Subscribe for exclusive speaking tips, industry insights, and updates on Pamela's upcoming engagements.</p>
                 <div class="position-relative mx-auto" style="max-width: 400px;">
                     <input class="form-control border-0 w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
                     <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Sign Up</button>
@@ -722,9 +654,6 @@ document.querySelectorAll('.session-option').forEach(option => {
             <div class="row">
                 <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
                     &copy; <a class="border-bottom" href="#home">Fusion Force LLC</a>, All Right Reserved.
-                    <br><br>
-                    <!-- Optional: Keep or remove template credits -->
-                    <!-- Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a> -->
                 </div>
                 <div class="col-md-6 text-center text-md-end">
                     <div class="footer-menu">
