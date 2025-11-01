@@ -124,9 +124,9 @@
         <img class="img-fluid" src="img/aboutz.JPG" alt="Pamela speaking to an audience" style="height: 788px; width: 100%; object-fit: cover;">
         <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: rgba(24, 29, 56, .5);">
             <div class="container">
-                <div class="row justify-content-center">
+                <div class="row justify-content-center" style="margin-top: 140px;">
                     <div class="col-sm-10 col-lg-8 text-center">
-                        <h1 class="display-3 text-white animated slideInDown">
+                        <h1 class="display-3 text-white animated slideInDown" style="font-size: 2.6rem;">
                             The Heart to Lead<br>
                             The Power to Train<br>
                             The Courage to Inspire
@@ -149,14 +149,14 @@
         <div class="row g-5">
             <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s" style="min-height: 400px;">
                 <div class="position-relative h-100">
-                    <img class="img-fluid position-absolute w-100 h-100" src="img/pam1.jpeg" alt="Pamela Robinson - Founder of Fusion Force" style="object-fit: cover;">
+                    <img class="img-fluid position-absolute w-100 h-100" src="img/Speech.jpeg" alt="Pamela Robinson - Founder of Fusion Force" style="object-fit: cover;">
                 </div>
             </div>
             <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.3s">
                 <h6 class="section-title bg-white text-start text-primary pe-3">About Pamela</h6>
                 <h1 class="mb-4">Pamela Robinson</h1>
                 <p class="mb-4">Pamela Robinson is a keynote speaker, corporate and leadership trainer, and a recognized expert in sales and marketing support for hospitality companies. Her career spans Asia, North America, the United States, and the Caribbean, where she has served as a General Manager, Director of Sales, and consultant for leading hotel operations and hospitality brands.</p>
-                <p class="mb-4">She is the founder of <strong>Fusion Force</strong>, a transformational company that specializes in speaking engagements, corporate and leadership training, and sales and marketting support for hospitality businesses seeking to elevate their sales and marketing performance.</p>
+                <p class="mb-4">She is the founder of <strong>Fusion Force</strong>, a transformational company that specializes in speaking engagements, corporate and leadership training, and sales and marketing support for hospitality companies seeking to elevate their sales and marketing performance.</p>
                 <div class="row gy-2 gx-4 mb-4">
                     <div class="col-sm-6">
                         <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Keynote Speaker</p>
@@ -239,7 +239,7 @@
                     <div class="service-icon mb-4">
                         <i class="fas fa-chart-line fa-3x text-primary"></i>
                     </div>
-                    <h4 class="mb-3">Sales & Marketting Support</h4>
+                    <h4 class="mb-3">Sales & Marketing Support</h4>
                     <p class="mb-4">Specialized support for hospitality businesses seeking to elevate sales and marketing performance.</p>
                     <div class="service-topics">
                         <span class="topic-tag">Sales Strategy</span>
@@ -614,7 +614,7 @@
             </div>
             <div class="col-lg-3 col-md-6">
                 <h4 class="text-white mb-3">Contact</h4>
-                <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Serving clients across North America, Europe & the Caribbean</p>
+                <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Serving clients across the globe.</p>
                 <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+1 (443) 545-4565</p>
                 <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@fusionforce.com</p>
                 <div class="d-flex pt-2">
@@ -649,11 +649,28 @@
             </div>
             <div class="col-lg-3 col-md-6">
                 <h4 class="text-white mb-3">Insights & Updates</h4>
-                <p>Subscribe for exclusive speaking tips, industry insights, and updates on Pamela's upcoming engagements.</p>
-                <div class="position-relative mx-auto" style="max-width: 400px;">
-                    <input class="form-control border-0 w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
-                    <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">Sign Up</button>
-                </div>
+                <p class="mb-3">Subscribe for exclusive speaking tips, industry insights, and updates on Pamela's upcoming engagements.</p>
+                
+                <!-- Newsletter Signup Form -->
+                <form action="https://formsubmit.co/winnienkatha010@gmail.com" method="POST" id="newsletterForm" class="newsletter-form">
+                    <input type="hidden" name="_subject" value="New Newsletter Subscriber - Fusion Force">
+                    <input type="hidden" name="_template" value="table">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="hidden" name="_next" value="#">
+                    
+                    <div class="input-group mb-3">
+                        <input type="email" name="email" class="form-control border-primary" placeholder="Enter your email" required style="border-radius: 8px 0 0 8px;">
+                        <button type="submit" class="btn btn-primary px-4" style="border-radius: 0 8px 8px 0;">
+                            <i class="fas fa-paper-plane me-2"></i>Sign Up
+                        </button>
+                    </div>
+                    <small class="text-muted">
+                        <i class="fas fa-lock me-1"></i>We respect your privacy. Unsubscribe at any time.
+                    </small>
+                </form>
+                
+                <!-- Newsletter Benefits -->
+                
             </div>
         </div>
     </div>
@@ -677,6 +694,259 @@
 </div>
 <!-- Footer End -->
 
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+            <div class="modal-body p-0">
+                <!-- Header with Gradient -->
+                <div class="bg-primary text-white text-center py-4" style="background: linear-gradient(135deg, #053e91, #1e4db1);">
+                    <div class="success-icon mb-3">
+                        <div class="icon-circle bg-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-check text-primary fa-2x"></i>
+                        </div>
+                    </div>
+                    <h3 class="mb-0">Welcome to Fusion Force!</h3>
+                </div>
+                
+                <!-- Content -->
+                <div class="p-5">
+                    <p class="text-center text-muted mb-4 lead">
+                        Thank you for subscribing! You're now part of our exclusive community of leaders and innovators.
+                    </p>
+                    
+                    <!-- What to Expect -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="icon-wrapper bg-light-primary rounded-circle p-3 me-3">
+                                    <i class="fas fa-rocket text-primary fa-lg"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Leadership Insights</h6>
+                                    <small class="text-muted">Weekly tips & strategies</small>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="icon-wrapper bg-light-primary rounded-circle p-3 me-3">
+                                    <i class="fas fa-calendar-alt text-primary fa-lg"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Event Updates</h6>
+                                    <small class="text-muted">First access to Pamela's events</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="icon-wrapper bg-light-primary rounded-circle p-3 me-3">
+                                    <i class="fas fa-gem text-primary fa-lg"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Exclusive Content</h6>
+                                    <small class="text-muted">Content you won't find elsewhere</small>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="icon-wrapper bg-light-primary rounded-circle p-3 me-3">
+                                    <i class="fas fa-bolt text-primary fa-lg"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-1">Industry Trends</h6>
+                                    <small class="text-muted">Latest hospitality insights</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Next Steps -->
+                    <div class="bg-light rounded p-4 mb-4">
+                        <h6 class="text-primary mb-3">
+                            <i class="fas fa-arrow-right me-2"></i>What Happens Next?
+                        </h6>
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 40px; height: 40px;">1</div>
+                                <small class="d-block">Confirmation Email</small>
+                            </div>
+                            <div class="col-4">
+                                <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 40px; height: 40px;">2</div>
+                                <small class="d-block">Welcome Package</small>
+                            </div>
+                            <div class="col-4">
+                                <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 40px; height: 40px;">3</div>
+                                <small class="d-block">First Insights</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-3 d-md-flex justify-content-center">
+                        <button type="button" class="btn btn-primary px-5 py-3" data-bs-dismiss="modal">
+                            <i class="fas fa-thumbs-up me-2"></i>Got It!
+                        </button>
+                        <a href="#contact" class="btn btn-outline-primary px-5 py-3" data-bs-dismiss="modal">
+                            <i class="fas fa-calendar-check me-2"></i>Book Speaking Session
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Newsletter Form Styling */
+    .newsletter-form .form-control {
+        border: 2px solid #053e91;
+        border-right: none;
+        height: 50px;
+    }
+    
+    .newsletter-form .btn {
+        height: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .newsletter-form .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(5, 62, 145, 0.3);
+    }
+    
+    /* Success Modal Styling */
+    .success-icon .icon-circle {
+        animation: bounceIn 0.6s ease-out;
+    }
+    
+    @keyframes bounceIn {
+        0% { opacity: 0; transform: scale(0.3); }
+        50% { opacity: 1; transform: scale(1.05); }
+        70% { transform: scale(0.9); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+    
+    .icon-wrapper {
+        transition: transform 0.3s ease;
+    }
+    
+    .icon-wrapper:hover {
+        transform: scale(1.1);
+    }
+    
+    .step-number {
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+    
+    .bg-light-primary {
+        background-color: rgba(5, 62, 145, 0.1) !important;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #053e91, #1e4db1);
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(5, 62, 145, 0.4);
+    }
+    
+    .btn-outline-primary {
+        border: 2px solid #053e91;
+        color: #053e91;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-primary:hover {
+        background-color: #053e91;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    /* Footer Link Styling */
+    .btn-link {
+        color: #fff;
+        text-decoration: none;
+        padding: 5px 0;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-link:hover {
+        color: #053e91;
+        transform: translateX(5px);
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const newsletterForm = document.getElementById('newsletterForm');
+    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+    
+    newsletterForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = new FormData(newsletterForm);
+        const email = formData.get('email');
+        
+        // Validate email
+        if (!validateEmail(email)) {
+            alert('Please enter a valid email address.');
+            return;
+        }
+        
+        // Show loading state
+        const submitBtn = newsletterForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
+        submitBtn.disabled = true;
+        
+        // Send to FormSubmit
+        fetch(newsletterForm.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (response.ok) {
+                // Show success modal
+                successModal.show();
+                // Reset form
+                newsletterForm.reset();
+            } else {
+                throw new Error('Network response was not ok');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('There was an issue with your subscription. Please try again.');
+        })
+        .finally(() => {
+            // Reset button state
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        });
+    });
+    
+    // Email validation function
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+    
+    // Close modal and scroll to contact section
+    document.querySelector('.btn-outline-primary').addEventListener('click', function() {
+        setTimeout(() => {
+            document.querySelector('#contact').scrollIntoView({
+                behavior: 'smooth'
+            });
+        }, 300);
+    });
+});
+</script>
     <!-- Back to Top -->
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
 
