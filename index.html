@@ -708,6 +708,319 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<!-- Newsletter Section Start -->
+<div class="container-xxl py-5" id="newsletter">
+    <div class="container">
+        <div class="row g-5 align-items-center">
+            <!-- Monthly Image on Left -->
+            <div class="col-lg-6">
+                <div class="position-relative h-100 rounded overflow-hidden">
+                    <img class="img-fluid w-100 h-100" src="img/FUSION FORCE NEWSLETTER NOV.jpg" alt="Fusion Force Monthly Insights" style="object-fit: cover; min-height: 400px;">
+                    <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(5, 62, 145, 0.4);">
+                        <div class="text-center text-white p-4">
+                            <h3 class="mb-3">Monthly Insights</h3>
+                            <p class="mb-0">Stay Ahead with Industry Trends</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Download Newsletter Button -->
+                <div class="text-center mt-4">
+                    <button class="btn btn-primary btn-lg px-4 py-3" id="downloadNewsletterBtn">
+                        <i class="fas fa-download me-2"></i>Download Newsletter Image
+                    </button>
+                    <div id="downloadStatus" class="mt-2"></div>
+                </div>
+            </div>
+
+            <!-- Newsletter Content on Right -->
+            <div class="col-lg-6">
+                <div class="bg-light rounded p-5 h-100">
+                    <h6 class="section-title bg-light text-start text-primary pe-3">Stay Connected</h6>
+                    <h1 class="mb-4">Join Our Monthly Newsletter</h1>
+                    <p class="mb-4">Get exclusive leadership insights, industry trends, and event updates delivered directly to your inbox each month.</p>
+                    
+                    <!-- Newsletter Benefits -->
+                    <div class="row mb-4">
+                        <div class="col-sm-6">
+                            <p class="mb-2"><i class="fa fa-check text-primary me-2"></i>Leadership Strategies</p>
+                            <p class="mb-2"><i class="fa fa-check text-primary me-2"></i>Industry Updates</p>
+                            <p class="mb-2"><i class="fa fa-check text-primary me-2"></i>Case Studies</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="mb-2"><i class="fa fa-check text-primary me-2"></i>Event Announcements</p>
+                            <p class="mb-2"><i class="fa fa-check text-primary me-2"></i>Exclusive Content</p>
+                            <p class="mb-2"><i class="fa fa-check text-primary me-2"></i>Success Stories</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Newsletter Form -->
+                    <form action="https://formsubmit.co/winnienkatha010@gmail.com" method="POST" id="newsletterSubscriptionForm" class="newsletter-form">
+                        <input type="hidden" name="_subject" value="📰 New Newsletter Subscriber - Fusion Force">
+                        <input type="hidden" name="_template" value="table">
+                        <input type="hidden" name="_captcha" value="false">
+                        
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="newsletterName" name="name" placeholder="Your Name">
+                                    <label for="newsletterName">Your Name</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control" id="newsletterEmail" name="email" placeholder="Your Email" required>
+                                    <label for="newsletterEmail">Your Email *</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="newsletterAgree" name="agree" required>
+                                    <label class="form-check-label" for="newsletterAgree">
+                                        I agree to receive monthly newsletters and updates from Fusion Force LLC
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button class="btn btn-primary w-100 py-3" type="submit" id="newsletterSubmit">
+                                    <i class="fas fa-envelope-open-text me-2"></i>Subscribe Now
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <!-- Additional CTAs -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="d-grid gap-2 d-md-flex justify-content-center">
+                                <a href="#contact" class="btn btn-outline-primary px-4 me-md-2">
+                                    <i class="fas fa-calendar-check me-2"></i>Book Pamela
+                                </a>
+                                <a href="#services" class="btn btn-outline-primary px-4">
+                                    <i class="fas fa-info-circle me-2"></i>Learn More
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Newsletter Section End -->
+
+<!-- Newsletter Success Modal -->
+<div class="modal fade" id="newsletterSuccessModal" tabindex="-1" aria-labelledby="newsletterSuccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+            <div class="modal-body p-0">
+                <div class="bg-primary text-white text-center py-4" style="background: linear-gradient(135deg, #053e91, #1e4db1);">
+                    <div class="success-icon mb-3">
+                        <div class="icon-circle bg-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="fas fa-check text-primary fa-2x"></i>
+                        </div>
+                    </div>
+                    <h3 class="mb-0">Welcome to Fusion Force!</h3>
+                </div>
+                
+                <div class="p-4">
+                    <p class="text-center text-muted mb-4">
+                        Thank you for subscribing to our newsletter! You'll receive our next monthly update with exclusive insights and industry trends.
+                    </p>
+                    
+                    <div class="d-grid">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                            <i class="fas fa-thumbs-up me-2"></i>Looking Forward to It!
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #newsletter .bg-light {
+        border-left: 4px solid #053e91;
+    }
+    
+    .newsletter-form .form-control {
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+    
+    .newsletter-form .form-control:focus {
+        border-color: #053e91;
+        box-shadow: 0 0 0 0.2rem rgba(5, 62, 145, 0.25);
+    }
+    
+    .newsletter-form .btn {
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .newsletter-form .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(5, 62, 145, 0.3);
+    }
+    
+    #downloadNewsletterBtn {
+        font-weight: 600;
+        transition: all 0.3s ease;
+        background: #053e91;
+        border: none;
+    }
+    
+    #downloadNewsletterBtn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(5, 62, 145, 0.3);
+        background: #042c6b;
+    }
+    
+    #downloadNewsletterBtn.loading {
+        pointer-events: none;
+        opacity: 0.7;
+    }
+    
+    .download-success {
+        color: #28a745;
+        font-weight: 500;
+    }
+    
+    .download-error {
+        color: #dc3545;
+        font-weight: 500;
+    }
+    
+    .success-icon .icon-circle {
+        animation: bounceIn 0.6s ease-out;
+    }
+    
+    @keyframes bounceIn {
+        0% { opacity: 0; transform: scale(0.3); }
+        50% { opacity: 1; transform: scale(1.05); }
+        70% { transform: scale(0.9); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #053e91, #1e4db1);
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(5, 62, 145, 0.4);
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const downloadBtn = document.getElementById('downloadNewsletterBtn');
+    const downloadStatus = document.getElementById('downloadStatus');
+    const newsletterForm = document.getElementById('newsletterSubscriptionForm');
+    const newsletterSuccessModal = new bootstrap.Modal(document.getElementById('newsletterSuccessModal'));
+    
+    // Download newsletter image functionality
+    downloadBtn.addEventListener('click', function() {
+        // Get the image source from the newsletter section
+        const newsletterImage = document.querySelector('#newsletter img');
+        const imageSrc = newsletterImage.src;
+        
+        // Show loading state
+        downloadBtn.classList.add('loading');
+        downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Downloading Image...';
+        downloadStatus.innerHTML = 'Preparing your newsletter image download...';
+        
+        // Create a filename with current date
+        const currentDate = new Date().toISOString().slice(0, 10);
+        const fileName = `Fusion-Force-Newsletter-Image-${currentDate}.jpg`;
+        
+        // Fetch the image and create download
+        fetch(imageSrc)
+            .then(response => response.blob())
+            .then(blob => {
+                // Create download link
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                
+                // Trigger download
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                // Show success message
+                downloadBtn.classList.remove('loading');
+                downloadBtn.innerHTML = '<i class="fas fa-download me-2"></i>Download Newsletter Image';
+                downloadStatus.innerHTML = '<span class="download-success"><i class="fas fa-check-circle me-2"></i>Image downloaded successfully!</span>';
+                
+                // Clear status after 5 seconds
+                setTimeout(() => {
+                    downloadStatus.innerHTML = '';
+                }, 5000);
+            })
+            .catch(error => {
+                console.error('Download error:', error);
+                downloadBtn.classList.remove('loading');
+                downloadBtn.innerHTML = '<i class="fas fa-download me-2"></i>Download Newsletter Image';
+                downloadStatus.innerHTML = '<span class="download-error"><i class="fas fa-exclamation-triangle me-2"></i>Download failed. Please try again.</span>';
+                
+                setTimeout(() => {
+                    downloadStatus.innerHTML = '';
+                }, 5000);
+            });
+    });
+    
+    // Newsletter form submission (mirroring footer logic)
+    newsletterForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(newsletterForm);
+        const email = formData.get('email');
+        
+        if (!validateEmail(email)) {
+            alert('Please enter a valid email address.');
+            return;
+        }
+        
+        const submitBtn = newsletterForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
+        submitBtn.disabled = true;
+        
+        fetch(newsletterForm.action, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (response.ok) {
+                newsletterSuccessModal.show();
+                newsletterForm.reset();
+            } else {
+                throw new Error('Network response was not ok');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('There was an issue with your subscription. Please try again.');
+        })
+        .finally(() => {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        });
+    });
+    
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+});
+</script>
+
 <!-- Footer Start -->
 <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
     <div class="container py-5">
