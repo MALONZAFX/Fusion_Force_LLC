@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+import dj_database_url  # Add this import
 
 # Load environment variables from .env file
 load_dotenv()
@@ -15,26 +16,12 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fusion-force-llc-secret-ke
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
 # ================= DOMAIN CONFIGURATION =================
-# Add ALL your domains here
-if DEBUG:
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
-else:
-    ALLOWED_HOSTS = [
-        'pamela-fusionforce.com',
-        'www.pamela-fusionforce.com',
-        'fusionforce.com',
-        'www.fusionforce.com',
-        '.pamela-fusionforce.com',  # Wildcard for all subdomains
-    ]
+# Parse ALLOWED_HOSTS from environment variable
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
-# CSRF Trusted Origins for HTTPS (production only)
-if not DEBUG:
-    CSRF_TRUSTED_ORIGINS = [
-        'https://pamela-fusionforce.com',
-        'https://www.pamela-fusionforce.com',
-        'https://fusionforce.com',
-        'https://www.fusionforce.com',
-    ]
+# Parse CSRF_TRUSTED_ORIGINS from environment variable
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
+CSRF_TRUSTED_ORIGINS = [origin for origin in CSRF_TRUSTED_ORIGINS if origin]  # Remove empty strings
 
 # Application definition
 INSTALLED_APPS = [
@@ -45,8 +32,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    # Third-party apps (only use whitenoise in production)
-    # 'whitenoise.runserver_nostatic',  # Comment out for development
+    # Third-party apps
+    'whitenoise.runserver_nostatic',  # For static files
     
     # Your apps
     'main.apps.MainConfig',  # Your main app
@@ -54,7 +41,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # 'whitenoise.middleware.WhiteNoiseMiddleware',  # Comment out for development
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise for static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -89,7 +76,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'fusion_force.wsgi.application'
 
 # ================= DATABASE CONFIGURATION =================
-# Use SQLite for development, PostgreSQL for production
+# Default to SQLite for development
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -97,18 +84,22 @@ DATABASES = {
     }
 }
 
-# For production, uncomment and configure PostgreSQL
-# if not DEBUG:
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.postgresql',
-#             'NAME': os.getenv('DB_NAME', 'fusionforce_db'),
-#             'USER': os.getenv('DB_USER', 'fusionforce_user'),
-#             'PASSWORD': os.getenv('DB_PASSWORD', ''),
-#             'HOST': os.getenv('DB_HOST', 'localhost'),
-#             'PORT': os.getenv('DB_PORT', '5432'),
-#         }
-#     }
+# Check for DATABASE_URL environment variable (Railway provides this)
+DATABASE_URL = os.getenv('DATABASE_URL')
+if DATABASE_URL:
+    # Use dj-database-url to parse the DATABASE_URL
+    DATABASES['default'] = dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+    
+    # If DATABASE_URL doesn't work, try individual variables as fallback
+    if not DATABASES['default']:
+        DATABASES['default'] = {
+            'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.sqlite3'),
+            'NAME': os.getenv('DB_NAME', BASE_DIR / 'db.sqlite3'),
+            'USER': os.getenv('DB_USER', ''),
+            'PASSWORD': os.getenv('DB_PASSWORD', ''),
+            'HOST': os.getenv('DB_HOST', ''),
+            'PORT': os.getenv('DB_PORT', ''),
+        }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -133,7 +124,7 @@ USE_I18N = True
 USE_TZ = True
 
 # ================= SECURITY SETTINGS =================
-# Security settings for production only
+# Security settings for production
 if not DEBUG:
     # HTTPS settings
     SECURE_SSL_REDIRECT = True
@@ -149,9 +140,6 @@ if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     X_FRAME_OPTIONS = 'DENY'
     SECURE_REFERRER_POLICY = 'same-origin'
-    
-    # Enable whitenoise for production
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
@@ -159,6 +147,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # For production collectsta
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+# WhiteNoise configuration
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files (Uploaded by users)
 MEDIA_URL = '/media/'
@@ -168,10 +159,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ================= EMAIL CONFIGURATION =================
-# Use console backend for development
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' if DEBUG else os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
+# Use console backend for development, SMTP for production
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
 
-if not DEBUG:
+# Only configure SMTP if not using console backend
+if EMAIL_BACKEND == 'django.core.mail.backends.smtp.EmailBackend':
     EMAIL_HOST = os.getenv('EMAIL_HOST', '')
     EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
     EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() == 'true'
@@ -220,21 +212,18 @@ LOGGING = {
         },
         'main': {
             'handlers': ['console'],
-            'level': 'INFO',
+            'level': 'DEBUG' if DEBUG else 'INFO',
         },
     },
 }
 
-# Cache configuration (simple memory cache for development)
+# Cache configuration
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         'LOCATION': 'fusion-force-cache',
     }
 }
-
-# Custom user model (if needed in future)
-# AUTH_USER_MODEL = 'main.CustomUser'
 
 # Django admin customization
 ADMIN_SITE_HEADER = 'FUSION-FORCE ADMIN'
