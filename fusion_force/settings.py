@@ -26,7 +26,6 @@ ALLOWED_HOSTS.extend([
     '.up.railway.app',  # More specific Railway domain pattern
     '*',  # For Railway internal routing
     '0.0.0.0',
-    '192.168.1.*',
 ])
 
 # Parse CSRF_TRUSTED_ORIGINS from environment variable
@@ -159,6 +158,7 @@ else:
     CSRF_COOKIE_SECURE = False
     SECURE_PROXY_SSL_HEADER = None
 
+# ================= STATIC FILES CONFIGURATION =================
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # For production collectstatic
@@ -167,12 +167,28 @@ STATICFILES_DIRS = [
 ]
 
 # WhiteNoise configuration for static files
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+# Use CompressedManifestStaticFilesStorage for production, StaticFilesStorage for dev
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+else:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Configure Whitenoise compression and caching
 WHITENOISE_USE_FINDERS = True
-WHITENOISE_MANIFEST_STRICT = False
+WHITENOISE_MANIFEST_STRICT = False  # Don't raise errors for missing files
 WHITENOISE_AUTOREFRESH = DEBUG  # Auto-refresh in development
+WHITENOISE_MAX_AGE = 31536000  # 1 year cache for static files
+WHITENOISE_INDEX_FILE = True  # Serve index.html for directories
+
+# Additional storage configuration for Django 4.2+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": STATICFILES_STORAGE,
+    },
+}
 
 # Media files (Uploaded by users)
 MEDIA_URL = '/media/'
@@ -232,10 +248,17 @@ LOGGING = {
         'django': {
             'handlers': ['console'],
             'level': 'INFO',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
         },
         'main': {
             'handlers': ['console'],
             'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': True,
         },
     },
 }
@@ -258,9 +281,6 @@ PORT = int(os.environ.get('PORT', 8000))  # Railway provides PORT environment va
 
 # For Railway deployment
 if not DEBUG:
-    # Ensure static files work on Railway
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-    
     # Railway uses PORT environment variable
     USE_X_FORWARDED_HOST = True
     USE_X_FORWARDED_PORT = True
