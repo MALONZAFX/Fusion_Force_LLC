@@ -13,36 +13,32 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fusion-force-llc-secret-key-2025-dev-only')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'  # Changed default to False for production
 
 # ================= DOMAIN CONFIGURATION =================
 # Parse ALLOWED_HOSTS from environment variable
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
-# Add Railway domains for production
-if not DEBUG:
-    ALLOWED_HOSTS.extend([
-        'fusionforcellc-production.up.railway.app',
-        '.railway.app',  # Allows all Railway subdomains
-        '.up.railway.app',  # More specific Railway domain pattern
-    ])
-    # Also add common production patterns
-    ALLOWED_HOSTS.append('*')  # For Railway internal routing
-else:
-    # In development, add common dev hosts
-    ALLOWED_HOSTS.extend(['0.0.0.0', '192.168.1.*'])
+# ALWAYS add Railway domains
+ALLOWED_HOSTS.extend([
+    'fusionforcellc-production.up.railway.app',
+    '.railway.app',  # Allows all Railway subdomains
+    '.up.railway.app',  # More specific Railway domain pattern
+    '*',  # For Railway internal routing
+    '0.0.0.0',
+    '192.168.1.*',
+])
 
 # Parse CSRF_TRUSTED_ORIGINS from environment variable
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
 CSRF_TRUSTED_ORIGINS = [origin for origin in CSRF_TRUSTED_ORIGINS if origin]  # Remove empty strings
 
-# Add Railway domains to CSRF trusted origins for production
-if not DEBUG:
-    CSRF_TRUSTED_ORIGINS.extend([
-        'https://fusionforcellc-production.up.railway.app',
-        'https://*.railway.app',
-        'https://*.up.railway.app',
-    ])
+# ALWAYS add Railway domains to CSRF trusted origins
+CSRF_TRUSTED_ORIGINS.extend([
+    'https://fusionforcellc-production.up.railway.app',
+    'https://*.railway.app',
+    'https://*.up.railway.app',
+])
 
 # Application definition
 INSTALLED_APPS = [
@@ -156,6 +152,12 @@ if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     X_FRAME_OPTIONS = 'DENY'
     SECURE_REFERRER_POLICY = 'same-origin'
+else:
+    # Development settings
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    SECURE_PROXY_SSL_HEADER = None
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
@@ -165,7 +167,6 @@ STATICFILES_DIRS = [
 ]
 
 # WhiteNoise configuration for static files
-# Use simpler storage to avoid missing file errors during collectstatic
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Configure Whitenoise compression and caching
