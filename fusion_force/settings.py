@@ -112,6 +112,8 @@ else:
         }
     }
 
+WHITENOISE_MANIFEST_STRICT = False 
+
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
