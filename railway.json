@@ -6,7 +6,9 @@
     },
     "deploy": {
       "startCommand": "python main.py",
-      "restartPolicyType": "ON_FAILURE",
-      "numReplicas": 1
+      "restartPolicyType": "ON_FAILURE"
+    },
+    "python": {
+      "version": "3.12"
     }
   }
