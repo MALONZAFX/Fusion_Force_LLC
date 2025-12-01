@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-import dj_database_url  # Add this import
+import dj_database_url
 
 # Load environment variables from .env file
 load_dotenv()
@@ -19,9 +19,30 @@ DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 # Parse ALLOWED_HOSTS from environment variable
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
+# Add Railway domains for production
+if not DEBUG:
+    ALLOWED_HOSTS.extend([
+        'fusionforcellc-production.up.railway.app',
+        '.railway.app',  # Allows all Railway subdomains
+        '.up.railway.app',  # More specific Railway domain pattern
+    ])
+    # Also add common production patterns
+    ALLOWED_HOSTS.append('*')  # For Railway internal routing
+else:
+    # In development, add common dev hosts
+    ALLOWED_HOSTS.extend(['0.0.0.0', '192.168.1.*'])
+
 # Parse CSRF_TRUSTED_ORIGINS from environment variable
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
 CSRF_TRUSTED_ORIGINS = [origin for origin in CSRF_TRUSTED_ORIGINS if origin]  # Remove empty strings
+
+# Add Railway domains to CSRF trusted origins for production
+if not DEBUG:
+    CSRF_TRUSTED_ORIGINS.extend([
+        'https://fusionforcellc-production.up.railway.app',
+        'https://*.railway.app',
+        'https://*.up.railway.app',
+    ])
 
 # Application definition
 INSTALLED_APPS = [
@@ -76,30 +97,25 @@ TEMPLATES = [
 WSGI_APPLICATION = 'fusion_force.wsgi.application'
 
 # ================= DATABASE CONFIGURATION =================
-# Default to SQLite for development
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
 # Check for DATABASE_URL environment variable (Railway provides this)
 DATABASE_URL = os.getenv('DATABASE_URL')
 if DATABASE_URL:
-    # Use dj-database-url to parse the DATABASE_URL
-    DATABASES['default'] = dj_database_url.parse(DATABASE_URL, conn_max_age=600)
-    
-    # If DATABASE_URL doesn't work, try individual variables as fallback
-    if not DATABASES['default']:
-        DATABASES['default'] = {
-            'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.sqlite3'),
-            'NAME': os.getenv('DB_NAME', BASE_DIR / 'db.sqlite3'),
-            'USER': os.getenv('DB_USER', ''),
-            'PASSWORD': os.getenv('DB_PASSWORD', ''),
-            'HOST': os.getenv('DB_HOST', ''),
-            'PORT': os.getenv('DB_PORT', ''),
+    # Use dj-database-url to parse the DATABASE_URL (Railway PostgreSQL)
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+else:
+    # Default to SQLite for development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -148,8 +164,14 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-# WhiteNoise configuration
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+# WhiteNoise configuration for static files
+# Use simpler storage to avoid missing file errors during collectstatic
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+
+# Configure Whitenoise compression and caching
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_MANIFEST_STRICT = False
+WHITENOISE_AUTOREFRESH = DEBUG  # Auto-refresh in development
 
 # Media files (Uploaded by users)
 MEDIA_URL = '/media/'
@@ -229,3 +251,18 @@ CACHES = {
 ADMIN_SITE_HEADER = 'FUSION-FORCE ADMIN'
 ADMIN_SITE_TITLE = 'Fusion Force Administration'
 ADMIN_INDEX_TITLE = 'Dashboard'
+
+# Railway-specific settings
+PORT = int(os.environ.get('PORT', 8000))  # Railway provides PORT environment variable
+
+# For Railway deployment
+if not DEBUG:
+    # Ensure static files work on Railway
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+    
+    # Railway uses PORT environment variable
+    USE_X_FORWARDED_HOST = True
+    USE_X_FORWARDED_PORT = True
+    
+    # For Railway's proxy
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
