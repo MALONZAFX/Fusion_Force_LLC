@@ -2,6 +2,8 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
+from django.db import OperationalError
+from django.contrib.auth.models import User
 
 # Load environment variables from .env file
 load_dotenv()
@@ -299,3 +301,17 @@ if not DEBUG:
     USE_X_FORWARDED_PORT = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+
+# Auto-create admin user if not exists
+try:
+    if not User.objects.filter(username=os.getenv('ADMIN_USERNAME', 'Pamela')).exists():
+        User.objects.create_superuser(
+            username=os.getenv('ADMIN_USERNAME', 'Pamela'),
+            email=os.getenv('ADMIN_EMAIL', 'pamela@fusionforce.com'),
+            password=os.getenv('ADMIN_PASSWORD', 'Pamela@2025')
+        )
+        print("✅ Admin user created automatically")
+except OperationalError:
+    print("⚠️ Database not ready yet")
+except Exception as e:
+    print(f"⚠️ Could not create admin user: {e}")
