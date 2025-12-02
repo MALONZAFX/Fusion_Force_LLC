@@ -13,31 +13,40 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fusion-force-llc-secret-key-2025-dev-only')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'  # Changed default to False for production
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 # ================= DOMAIN CONFIGURATION =================
 # Parse ALLOWED_HOSTS from environment variable
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if host.strip()]
 
-# ALWAYS add Railway domains
-ALLOWED_HOSTS.extend([
-    'fusionforcellc-production.up.railway.app',
-    '.railway.app',  # Allows all Railway subdomains
-    '.up.railway.app',  # More specific Railway domain pattern
-    '*',  # For Railway internal routing
-    '0.0.0.0',
-])
+# ALWAYS add Railway domains in production
+if not DEBUG:
+    ALLOWED_HOSTS.extend([
+        'fusionforcellc-production.up.railway.app',
+        '.railway.app',  # Allows all Railway subdomains
+        '.up.railway.app',  # More specific Railway domain pattern
+    ])
+else:
+    # In development, allow common local hosts
+    ALLOWED_HOSTS.extend([
+        'localhost',
+        '127.0.0.1',
+        '0.0.0.0',
+        '[::1]',  # IPv6 localhost
+    ])
 
 # Parse CSRF_TRUSTED_ORIGINS from environment variable
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
-CSRF_TRUSTED_ORIGINS = [origin for origin in CSRF_TRUSTED_ORIGINS if origin]  # Remove empty strings
+CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if origin.strip()]
 
-# ALWAYS add Railway domains to CSRF trusted origins
+# Add Railway domains to CSRF trusted origins
 CSRF_TRUSTED_ORIGINS.extend([
     'https://fusionforcellc-production.up.railway.app',
     'https://*.railway.app',
     'https://*.up.railway.app',
 ])
+
+# Remove duplicates
+CSRF_TRUSTED_ORIGINS = list(set(CSRF_TRUSTED_ORIGINS))
 
 # Application definition
 INSTALLED_APPS = [
@@ -57,7 +66,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise for static files
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise for static files - MUST be after SecurityMiddleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -75,7 +84,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'templates'),
             os.path.join(BASE_DIR, 'main/templates'),
         ],
-        'APP_DIRS': True,
+        'APP_DIRS': True,  # This automatically loads templates from app directories
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -101,6 +110,7 @@ if DATABASE_URL:
             default=DATABASE_URL,
             conn_max_age=600,
             conn_health_checks=True,
+            ssl_require=not DEBUG,  # SSL required in production only
         )
     }
 else:
@@ -112,13 +122,6 @@ else:
         }
     }
 
-WHITENOISE_MANIFEST_STRICT = False
-WHITENOISE_AUTOREFRESH = True
-
-TEMPLATES[0]['OPTIONS']['loaders'] = [
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-]
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -163,9 +166,8 @@ else:
     SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
-    SECURE_PROXY_SSL_HEADER = None
 
-# ================= STATIC FILES CONFIGURATION =================
+# ================= STATIC FILES CONFIGURATION (FIXED) =================
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # For production collectstatic
@@ -173,29 +175,31 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-# WhiteNoise configuration for static files
-# Use CompressedManifestStaticFilesStorage for production, StaticFilesStorage for dev
-if not DEBUG:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-else:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-
-# Configure Whitenoise compression and caching
-WHITENOISE_USE_FINDERS = True
-WHITENOISE_MANIFEST_STRICT = False  # Don't raise errors for missing files
-WHITENOISE_AUTOREFRESH = DEBUG  # Auto-refresh in development
-WHITENOISE_MAX_AGE = 31536000  # 1 year cache for static files
-WHITENOISE_INDEX_FILE = True  # Serve index.html for directories
-
-# Additional storage configuration for Django 4.2+
+# WhiteNoise configuration for Django 4.2+
+# Using STORAGES dictionary (required for Django 4.2+)
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": STATICFILES_STORAGE,
+        # Use CompressedStaticFilesStorage for development (faster)
+        # Use CompressedManifestStaticFilesStorage for production (caching)
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+# If you want different backends for development vs production:
+# if DEBUG:
+#     STORAGES["staticfiles"]["BACKEND"] = "whitenoise.storage.CompressedStaticFilesStorage"
+# else:
+#     STORAGES["staticfiles"]["BACKEND"] = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Additional WhiteNoise settings
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_MANIFEST_STRICT = False  # Don't raise errors for missing files
+WHITENOISE_AUTOREFRESH = DEBUG  # Auto-refresh only in debug mode
+WHITENOISE_MAX_AGE = 31536000  # 1 year cache for static files
+WHITENOISE_INDEX_FILE = True  # Serve index.html for directories
 
 # Media files (Uploaded by users)
 MEDIA_URL = '/media/'
@@ -250,6 +254,12 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
         },
+        'file': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'django.log'),
+            'formatter': 'verbose',
+        },
     },
     'loggers': {
         'django': {
@@ -258,7 +268,7 @@ LOGGING = {
             'propagate': True,
         },
         'django.request': {
-            'handlers': ['console'],
+            'handlers': ['console', 'file'],
             'level': 'ERROR',
             'propagate': False,
         },
@@ -292,5 +302,8 @@ if not DEBUG:
     USE_X_FORWARDED_HOST = True
     USE_X_FORWARDED_PORT = True
     
-    # For Railway's proxy
+    # Ensure proper proxy settings for Railway
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Custom settings for your project
+# Add any additional custom settings below this line
