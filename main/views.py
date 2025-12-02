@@ -245,20 +245,8 @@ def about(request):
         )
     return render(request, 'main/about.html', {'about_content': about_content})
 
-def contact_page(request):
-    contact_form = ContactForm()
-    return render(request, 'main/contact.html', {'contact_form': contact_form})
 
-def team(request):
-    return render(request, 'main/team.html')
 
-def testimonial_view(request):
-    testimonials = Testimonial.objects.filter(is_active=True)
-    return render(request, 'main/testimonial.html', {'testimonials': testimonials})
 
-def courses(request):
-    services = Service.objects.all()
-    return render(request, 'main/courses.html', {'services': services})
 
-def page_not_found(request, exception):
-    return render(request, 'main/404.html', status=404)
+
