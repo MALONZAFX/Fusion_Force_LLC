@@ -1,7 +1,6 @@
 ﻿import os
 from pathlib import Path
 from dotenv import load_dotenv
-import dj_database_url
 
 # Load environment variables from .env file
 load_dotenv()
@@ -17,7 +16,7 @@ IS_RAILWAY = os.getenv('RAILWAY', 'False').lower() == 'true'
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fusion-force-llc-secret-key-2025-dev-only')
 
 # ================= DEBUG MODE =================
-# Smart debug mode detection - FIXED
+# Smart debug mode detection
 if IS_RAILWAY:
     # On Railway, always use production settings (DEBUG=False)
     DEBUG = False
@@ -113,30 +112,27 @@ TEMPLATES = [
 WSGI_APPLICATION = 'fusion_force.wsgi.application'
 
 # ================= DATABASE =================
-DATABASE_URL = os.getenv('DATABASE_URL')
-
-if DATABASE_URL:
-    # Force use PostgreSQL on Railway
-    DATABASES = {
-        'default': dj_database_url.parse(
-            DATABASE_URL,
-            conn_max_age=600,
-            conn_health_checks=True,
-            ssl_require=True
-        )
+# SIMPLIFIED: Always use SQLite, both locally and on Railway
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',  # Simple path
     }
-    print("✅ Using PostgreSQL on Railway")
-else:
-    # Only use SQLite for local development
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-    print("✅ Using SQLite locally")
+}
 
+# SQLite performance optimizations for production
+if not DEBUG:
+    # Production SQLite optimizations
+    DATABASES['default']['OPTIONS'] = {
+        'timeout': 20,  # Busy timeout in seconds
+        'check_same_thread': False,  # Allow multiple threads
+        'journal_mode': 'WAL',  # Write-Ahead Logging for better concurrency
+        'cache_size': -2000,  # 2MB cache (in kilobytes, negative means MB)
+        'synchronous': 'NORMAL',  # Balanced durability/performance
+    }
     
+print(f"✅ Using SQLite with {'production' if not DEBUG else 'development'} optimizations")
+
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -187,23 +183,22 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-# WhiteNoise configuration - Fixed to use simple storage
+# WhiteNoise configuration
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        # Using CompressedStaticFilesStorage (no manifest issues)
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
 
 # Additional WhiteNoise settings
 WHITENOISE_USE_FINDERS = True
-WHITENOISE_MANIFEST_STRICT = False  # Don't raise errors for missing files
-WHITENOISE_AUTOREFRESH = DEBUG  # Auto-refresh only in debug mode
-WHITENOISE_MAX_AGE = 31536000  # 1 year cache for static files
-WHITENOISE_INDEX_FILE = True  # Serve index.html for directories
+WHITENOISE_MANIFEST_STRICT = False
+WHITENOISE_AUTOREFRESH = DEBUG
+WHITENOISE_MAX_AGE = 31536000
+WHITENOISE_INDEX_FILE = True
 
 # Media files (Uploaded by users)
 MEDIA_URL = '/media/'
@@ -299,10 +294,9 @@ ADMIN_INDEX_TITLE = 'Dashboard'
 PORT = int(os.environ.get('PORT', 8000))
 
 # For Railway deployment
-if not DEBUG:
+if IS_RAILWAY:
     USE_X_FORWARDED_HOST = True
     USE_X_FORWARDED_PORT = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-
-# Railway deployment ready - 12/02/2025 15:38:45
+print("🚀 Ready for deployment with SQLite!")
