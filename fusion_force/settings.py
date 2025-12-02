@@ -12,48 +12,50 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ================= DEPLOYMENT ENVIRONMENT =================
 # Detect deployment environment
 IS_RAILWAY = os.getenv('RAILWAY', 'False').lower() == 'true'
-IS_PRODUCTION = os.getenv('DJANGO_ENV', 'development').lower() == 'production'
-IS_DEVELOPMENT = not IS_PRODUCTION
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fusion-force-llc-secret-key-2025-dev-only')
 
 # ================= DEBUG MODE =================
-# Smart debug mode detection
-if IS_DEVELOPMENT or IS_RAILWAY:
-    DEBUG = True
+# Smart debug mode detection - FIXED
+if IS_RAILWAY:
+    # On Railway, always use production settings (DEBUG=False)
+    DEBUG = False
 else:
-    DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
+    # Local development
+    DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
 # ================= DOMAIN CONFIGURATION =================
-# Parse ALLOWED_HOSTS from environment variable
-ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if host.strip()]
+# ALLOWED_HOSTS - ALWAYS include Railway domains
+ALLOWED_HOSTS = [
+    'fusionforcellc-production.up.railway.app',  # Your specific Railway domain
+    '.railway.app',                             # All Railway subdomains
+    '.up.railway.app',                          # All Railway app domains
+    'localhost',
+    '127.0.0.1',
+    '0.0.0.0',
+    '[::1]',
+]
 
-# ALWAYS add Railway domains
-if not DEBUG:
-    ALLOWED_HOSTS.extend([
-        'fusionforcellc-production.up.railway.app',
-        '.railway.app',
-        '.up.railway.app',
-    ])
-else:
-    # In development, allow common local hosts
-    ALLOWED_HOSTS.extend([
-        'localhost',
-        '127.0.0.1',
-        '0.0.0.0',
-        '[::1]',
-    ])
+# Add any custom hosts from environment variable
+env_hosts = os.getenv('ALLOWED_HOSTS', '')
+if env_hosts:
+    ALLOWED_HOSTS.extend([host.strip() for host in env_hosts.split(',') if host.strip()])
 
-# Parse CSRF_TRUSTED_ORIGINS from environment variable
-CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if origin.strip()]
+# Remove duplicates
+ALLOWED_HOSTS = list(set(ALLOWED_HOSTS))
 
-# Add Railway domains to CSRF trusted origins
-CSRF_TRUSTED_ORIGINS.extend([
+# CSRF TRUSTED ORIGINS
+CSRF_TRUSTED_ORIGINS = [
     'https://fusionforcellc-production.up.railway.app',
     'https://*.railway.app',
     'https://*.up.railway.app',
-])
+]
+
+# Add any custom origins from environment
+env_origins = os.getenv('CSRF_TRUSTED_ORIGINS', '')
+if env_origins:
+    CSRF_TRUSTED_ORIGINS.extend([origin.strip() for origin in env_origins.split(',') if origin.strip()])
 
 # Remove duplicates
 CSRF_TRUSTED_ORIGINS = list(set(CSRF_TRUSTED_ORIGINS))
@@ -119,7 +121,7 @@ if DATABASE_URL:
             default=DATABASE_URL,
             conn_max_age=600,
             conn_health_checks=True,
-            ssl_require=not DEBUG,
+            ssl_require=True,  # Always use SSL on Railway
         )
     }
 else:
@@ -153,9 +155,8 @@ USE_I18N = True
 USE_TZ = True
 
 # ================= SECURITY SETTINGS =================
-# Security settings for production
 if not DEBUG:
-    # HTTPS settings
+    # Production security settings
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
@@ -164,8 +165,6 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
-    
-    # Additional security
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     X_FRAME_OPTIONS = 'DENY'
     SECURE_REFERRER_POLICY = 'same-origin'
@@ -175,7 +174,7 @@ else:
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
 
-# ================= STATIC FILES CONFIGURATION (FIXED) =================
+# ================= STATIC FILES CONFIGURATION =================
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -183,13 +182,13 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-# WhiteNoise configuration - FIXED!
+# WhiteNoise configuration - Fixed to use simple storage
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        # CHANGED: Using CompressedStaticFilesStorage to fix the missing file error
+        # Using CompressedStaticFilesStorage (no manifest issues)
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
@@ -197,9 +196,9 @@ STORAGES = {
 # Additional WhiteNoise settings
 WHITENOISE_USE_FINDERS = True
 WHITENOISE_MANIFEST_STRICT = False  # Don't raise errors for missing files
-WHITENOISE_AUTOREFRESH = DEBUG
-WHITENOISE_MAX_AGE = 31536000
-WHITENOISE_INDEX_FILE = True
+WHITENOISE_AUTOREFRESH = DEBUG  # Auto-refresh only in debug mode
+WHITENOISE_MAX_AGE = 31536000  # 1 year cache for static files
+WHITENOISE_INDEX_FILE = True  # Serve index.html for directories
 
 # Media files (Uploaded by users)
 MEDIA_URL = '/media/'
