@@ -1,4 +1,4 @@
-import os
+﻿import os
 import re
 
 def fix_html_files():

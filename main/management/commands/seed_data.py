@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand
+﻿from django.core.management.base import BaseCommand
 from main.models import HomeContent, AboutContent, Service, Testimonial, Event
 
 class Command(BaseCommand):
@@ -21,7 +21,7 @@ class Command(BaseCommand):
             subtitle="Pamela Robinson - Making the Impossible Possible through transformative speaking, corporate training, and leadership development.",
             is_active=True
         )
-        self.stdout.write(f"✓ Created Home Content: {home_content}")
+        self.stdout.write(f"âœ“ Created Home Content: {home_content}")
         
         # Create About Content
         about_content = AboutContent.objects.create(
@@ -36,7 +36,7 @@ Global Experience
 Trained by Les Brown
 Author of Leading with the Heart"""
         )
-        self.stdout.write(f"✓ Created About Content: {about_content}")
+        self.stdout.write(f"âœ“ Created About Content: {about_content}")
         
         # Create Services
         services_data = [
@@ -65,7 +65,7 @@ Author of Leading with the Heart"""
         
         for service_data in services_data:
             service = Service.objects.create(**service_data)
-            self.stdout.write(f"✓ Created Service: {service}")
+            self.stdout.write(f"âœ“ Created Service: {service}")
         
         # Create Testimonials
         testimonials_data = [
@@ -94,7 +94,7 @@ Author of Leading with the Heart"""
         
         for testimonial_data in testimonials_data:
             testimonial = Testimonial.objects.create(**testimonial_data)
-            self.stdout.write(f"✓ Created Testimonial: {testimonial}")
+            self.stdout.write(f"âœ“ Created Testimonial: {testimonial}")
         
         # Create Events
         events_data = [
@@ -117,6 +117,6 @@ Author of Leading with the Heart"""
         
         for event_data in events_data:
             event = Event.objects.create(**event_data)
-            self.stdout.write(f"✓ Created Event: {event}")
+            self.stdout.write(f"âœ“ Created Event: {event}")
         
-        self.stdout.write(self.style.SUCCESS('✓ All data seeded successfully!'))
+        self.stdout.write(self.style.SUCCESS('âœ“ All data seeded successfully!'))

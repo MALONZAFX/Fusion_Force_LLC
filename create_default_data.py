@@ -1,4 +1,4 @@
-from django.core.management.base import BaseCommand
+﻿from django.core.management.base import BaseCommand
 from main.models import HomeContent, AboutContent, Service, Testimonial, Event
 
 class Command(BaseCommand):

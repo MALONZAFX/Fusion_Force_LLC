@@ -1,4 +1,4 @@
-# admin.py
+﻿# admin.py
 from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
@@ -258,7 +258,7 @@ class ContactSubmissionAdmin(admin.ModelAdmin):
     def contacted_status(self, obj):
         if obj.contacted_at:
             return format_html(
-                '<span style="color: green;">✓ Contacted</span><br><small>{}</small>',
+                '<span style="color: green;">âœ“ Contacted</span><br><small>{}</small>',
                 obj.contacted_at.strftime('%Y-%m-%d %H:%M')
             )
         return format_html('<span style="color: orange;">Pending</span>')
