@@ -1,11 +1,14 @@
-﻿import os
+﻿"""
+Django settings for fusion_force project.
+"""
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SIMPLE CONFIG
 SECRET_KEY = os.getenv('SECRET_KEY', 'dev-key-123456')
-DEBUG = True  # FORCE DEBUG TRUE
+DEBUG = True  # FORCE DEBUG TRUE FOR NOW
 ALLOWED_HOSTS = ['*']
 
 # APPS
@@ -16,7 +19,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main',
+    'main',  # YOUR APP
 ]
 
 # MIDDLEWARE
@@ -59,8 +62,21 @@ DATABASES = {
     }
 }
 
-# PASSWORDS (simplified)
-AUTH_PASSWORD_VALIDATORS = []
+# PASSWORDS
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
 
 # INTERNATIONALIZATION
 LANGUAGE_CODE = 'en-us'
@@ -73,4 +89,4 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-print("✅ Django setup complete - NO ERROR HANDLERS")
+print("✅ Django settings loaded")
