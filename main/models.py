@@ -185,3 +185,32 @@ class SystemLog(models.Model):
     
     def __str__(self):
         return f"{self.get_log_level_display()} - {self.message[:50]}..."
+
+
+
+from django.db import models
+
+class HomeContent(models.Model):
+    title = models.CharField(max_length=200, default="Fusion Force LLC")
+    subtitle = models.TextField(default="Pamela Robinson - Making the Impossible Possible")
+    hero_image = models.ImageField(upload_to='home_images/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return self.title
+
+class AboutContent(models.Model):
+    title = models.CharField(max_length=200, default="Pamela Robinson")
+    description = models.TextField(default="Pamela Robinson is a keynote speaker and leadership trainer.")
+    image = models.ImageField(upload_to='about_images/', blank=True, null=True)
+    bullet_points = models.TextField(
+        default="Keynote Speaker\nLeadership Trainer\nHospitality Expert",
+        help_text="Enter each bullet point on a new line"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.title
