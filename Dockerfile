@@ -7,6 +7,10 @@ RUN apt-get update && apt-get install -y \
     libsqlite3-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
 WORKDIR /app
 
 # Copy requirements and install
@@ -19,18 +23,9 @@ COPY . .
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
-# Create a startup script
-RUN echo '#!/bin/bash\n\
-set -e\n\
-echo "=== Starting Django Application ==="\n\
-echo "Running migrations..."\n\
-python manage.py migrate\n\
-echo "Starting Gunicorn on port \$PORT..."\n\
-exec gunicorn fusion_force.wsgi:application --bind 0.0.0.0:\$PORT --workers 3\n' > /app/start.sh && \
-    chmod +x /app/start.sh
-
 # Run as non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
 
-CMD ["/app/start.sh"]
+# Single command to run migrations and start server
+CMD sh -c "python manage.py migrate && gunicorn fusion_force.wsgi:application --bind 0.0.0.0:\${PORT:-8000} --workers 3 --timeout 120"
