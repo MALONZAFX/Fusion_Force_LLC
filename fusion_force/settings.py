@@ -9,22 +9,32 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# ================= DEPLOYMENT ENVIRONMENT =================
+# Detect deployment environment
+IS_RAILWAY = os.getenv('RAILWAY', 'False').lower() == 'true'
+IS_PRODUCTION = os.getenv('DJANGO_ENV', 'development').lower() == 'production'
+IS_DEVELOPMENT = not IS_PRODUCTION
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fusion-force-llc-secret-key-2025-dev-only')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
+# ================= DEBUG MODE =================
+# Smart debug mode detection
+if IS_DEVELOPMENT or IS_RAILWAY:
+    DEBUG = True
+else:
+    DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 # ================= DOMAIN CONFIGURATION =================
 # Parse ALLOWED_HOSTS from environment variable
 ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if host.strip()]
 
-# ALWAYS add Railway domains in production
+# ALWAYS add Railway domains
 if not DEBUG:
     ALLOWED_HOSTS.extend([
         'fusionforcellc-production.up.railway.app',
-        '.railway.app',  # Allows all Railway subdomains
-        '.up.railway.app',  # More specific Railway domain pattern
+        '.railway.app',
+        '.up.railway.app',
     ])
 else:
     # In development, allow common local hosts
@@ -32,7 +42,7 @@ else:
         'localhost',
         '127.0.0.1',
         '0.0.0.0',
-        '[::1]',  # IPv6 localhost
+        '[::1]',
     ])
 
 # Parse CSRF_TRUSTED_ORIGINS from environment variable
@@ -58,15 +68,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     # Third-party apps
-    'whitenoise.runserver_nostatic',  # For static files
+    'whitenoise.runserver_nostatic',
     
     # Your apps
-    'main.apps.MainConfig',  # Your main app
+    'main.apps.MainConfig',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise for static files - MUST be after SecurityMiddleware
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise for static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -84,7 +94,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'templates'),
             os.path.join(BASE_DIR, 'main/templates'),
         ],
-        'APP_DIRS': True,  # This automatically loads templates from app directories
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -101,20 +111,18 @@ TEMPLATES = [
 WSGI_APPLICATION = 'fusion_force.wsgi.application'
 
 # ================= DATABASE CONFIGURATION =================
-# Check for DATABASE_URL environment variable (Railway provides this)
+# Check for DATABASE_URL environment variable
 DATABASE_URL = os.getenv('DATABASE_URL')
 if DATABASE_URL:
-    # Use dj-database-url to parse the DATABASE_URL (Railway PostgreSQL)
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
             conn_max_age=600,
             conn_health_checks=True,
-            ssl_require=not DEBUG,  # SSL required in production only
+            ssl_require=not DEBUG,
         )
     }
 else:
-    # Default to SQLite for development
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -153,7 +161,7 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     
@@ -170,36 +178,28 @@ else:
 # ================= STATIC FILES CONFIGURATION (FIXED) =================
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # For production collectstatic
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-# WhiteNoise configuration for Django 4.2+
-# Using STORAGES dictionary (required for Django 4.2+)
+# WhiteNoise configuration - FIXED!
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        # Use CompressedStaticFilesStorage for development (faster)
-        # Use CompressedManifestStaticFilesStorage for production (caching)
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        # CHANGED: Using CompressedStaticFilesStorage to fix the missing file error
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
-
-# If you want different backends for development vs production:
-# if DEBUG:
-#     STORAGES["staticfiles"]["BACKEND"] = "whitenoise.storage.CompressedStaticFilesStorage"
-# else:
-#     STORAGES["staticfiles"]["BACKEND"] = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Additional WhiteNoise settings
 WHITENOISE_USE_FINDERS = True
 WHITENOISE_MANIFEST_STRICT = False  # Don't raise errors for missing files
-WHITENOISE_AUTOREFRESH = DEBUG  # Auto-refresh only in debug mode
-WHITENOISE_MAX_AGE = 31536000  # 1 year cache for static files
-WHITENOISE_INDEX_FILE = True  # Serve index.html for directories
+WHITENOISE_AUTOREFRESH = DEBUG
+WHITENOISE_MAX_AGE = 31536000
+WHITENOISE_INDEX_FILE = True
 
 # Media files (Uploaded by users)
 MEDIA_URL = '/media/'
@@ -209,10 +209,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ================= EMAIL CONFIGURATION =================
-# Use console backend for development, SMTP for production
 EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
 
-# Only configure SMTP if not using console backend
 if EMAIL_BACKEND == 'django.core.mail.backends.smtp.EmailBackend':
     EMAIL_HOST = os.getenv('EMAIL_HOST', '')
     EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
@@ -223,16 +221,16 @@ if EMAIL_BACKEND == 'django.core.mail.backends.smtp.EmailBackend':
     SERVER_EMAIL = os.getenv('SERVER_EMAIL', 'admin@fusionforce.com')
 
 # ================= CUSTOM SETTINGS =================
-# Admin URL - Customize for security
+# Admin URL
 ADMIN_URL = os.getenv('ADMIN_URL', 'fusionforce-admin/')
 
 # Session settings
-SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
+SESSION_COOKIE_AGE = 1209600
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 # File upload settings
-FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
-DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
 
 # Logging configuration
 LOGGING = {
@@ -294,15 +292,12 @@ ADMIN_SITE_TITLE = 'Fusion Force Administration'
 ADMIN_INDEX_TITLE = 'Dashboard'
 
 # Railway-specific settings
-PORT = int(os.environ.get('PORT', 8000))  # Railway provides PORT environment variable
+PORT = int(os.environ.get('PORT', 8000))
 
 # For Railway deployment
 if not DEBUG:
-    # Railway uses PORT environment variable
     USE_X_FORWARDED_HOST = True
     USE_X_FORWARDED_PORT = True
-    
-    # Ensure proper proxy settings for Railway
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Custom settings for your project
