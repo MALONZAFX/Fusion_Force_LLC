@@ -299,5 +299,3 @@ if not DEBUG:
     USE_X_FORWARDED_PORT = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# Custom settings for your project
-# Add any additional custom settings below this line
