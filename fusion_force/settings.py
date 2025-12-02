@@ -3,13 +3,14 @@ Django settings for fusion_force project.
 """
 import os
 from pathlib import Path
+import dj_database_url  # ADD THIS LINE
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SIMPLE CONFIG
 SECRET_KEY = os.getenv('SECRET_KEY', 'dev-key-123456')
-DEBUG = True  # FORCE DEBUG TRUE FOR NOW
-ALLOWED_HOSTS = ['*']
+DEBUG = os.getenv('DEBUG', 'True') == 'True'  # READ FROM ENV
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 # APPS
 INSTALLED_APPS = [
@@ -22,9 +23,10 @@ INSTALLED_APPS = [
     'main',  # YOUR APP
 ]
 
-# MIDDLEWARE
+# MIDDLEWARE - ADD WHITENOISE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # ADD THIS
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -54,12 +56,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'fusion_force.wsgi.application'
 
-# DATABASE
+# DATABASE - POSTGRESQL READY
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        # Automatically uses DATABASE_URL environment variable from Railway
+        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
 
 # PASSWORDS
@@ -87,6 +91,20 @@ USE_TZ = True
 # STATIC FILES
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  # ADD THIS
+
+# MEDIA FILES
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# SECURITY SETTINGS FOR PRODUCTION
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
 
 print("✅ Django settings loaded")
