@@ -1,389 +1,187 @@
-﻿# admin.py - COMPLETE VERSION WITH FUSION-FORCE BRANDING
-from django.contrib import admin
-from django.utils.html import format_html
-from django.urls import reverse
-from django.db.models import Count
-from django.utils import timezone
-from datetime import timedelta
-from .models import (
-    HomeContent, AboutContent, Service, NewsletterContent,
-    Testimonial, Event, GalleryImage, ContactSubmission,
-    NewsletterSubscription, SystemLog
-)
+﻿# models.py - NO CIRCULAR IMPORTS!
+from django.db import models
 
-# ============ CUSTOM ADMIN SITE ============
-class FusionForceAdminSite(admin.AdminSite):
-    site_header = "FUSION-FORCE ADMIN"
-    site_title = "Fusion Force Administration"
-    index_title = "Dashboard"
+class HomeContent(models.Model):
+    title = models.CharField(max_length=200, default="Fusion Force LLC")
+    subtitle = models.TextField(default="Pamela Robinson - Making the Impossible Possible through transformative speaking, corporate training, and leadership development.")
+    hero_image = models.ImageField(upload_to='home_images/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
     
-    def get_app_list(self, request, app_label=None):
-        """
-        Customize the app list to group related models
-        """
-        app_list = super().get_app_list(request, app_label)
-        
-        # Custom grouping for Fusion Force
-        for app in app_list:
-            if app['app_label'] == 'main':  # Your app name
-                # Group content management
-                content_models = ['HomeContent', 'AboutContent', 'NewsletterContent']
-                form_models = ['ContactSubmission', 'NewsletterSubscription']
-                display_models = ['Service', 'Testimonial', 'Event', 'GalleryImage']
-                system_models = ['SystemLog']
-                
-                content_list = []
-                form_list = []
-                display_list = []
-                system_list = []
-                
-                for model in app['models']:
-                    if model['object_name'] in content_models:
-                        content_list.append(model)
-                    elif model['object_name'] in form_models:
-                        form_list.append(model)
-                    elif model['object_name'] in display_models:
-                        display_list.append(model)
-                    elif model['object_name'] in system_models:
-                        system_list.append(model)
-                
-                # Reorganize with custom sections
-                app['models'] = content_list + display_list + form_list + system_list
-        
-        return app_list
+    def __str__(self):
+        return self.title
 
-# Create custom admin site instance
-admin_site = FusionForceAdminSite(name='fusionforce_admin')
-
-# ============ ADMIN CLASSES ============
-@admin.register(HomeContent, site=admin_site)
-class HomeContentAdmin(admin.ModelAdmin):
-    list_display = ['title', 'is_active', 'created_at', 'admin_actions']
-    list_filter = ['is_active', 'created_at']
-    list_editable = ['is_active']
-    search_fields = ['title', 'subtitle']
-    readonly_fields = ['created_at', 'updated_at']
-    
-    fieldsets = (
-        ('Content', {
-            'fields': ('title', 'subtitle', 'hero_image')
-        }),
-        ('Settings', {
-            'fields': ('is_active',)
-        }),
-        ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
+class AboutContent(models.Model):
+    title = models.CharField(max_length=200, default="Pamela Robinson")
+    description = models.TextField(default="Pamela Robinson is a keynote speaker, corporate and leadership trainer, founder of Fusion Force and a recognized expert in sales and marketing support for hospitality companies.")
+    image = models.ImageField(upload_to='about_images/', blank=True, null=True)
+    bullet_points = models.TextField(
+        default="Keynote Speaker\nLeadership Trainer\nHospitality Expert\nGlobal Experience",
+        help_text="Enter each bullet point on a new line"
     )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
-    def admin_actions(self, obj):
-        return format_html(
-            '<a href="{}" class="button" target="_blank">View Site</a>',
-            reverse('home')
-        )
-    admin_actions.short_description = 'Actions'
+    def __str__(self):
+        return self.title
 
-@admin.register(AboutContent, site=admin_site)
-class AboutContentAdmin(admin.ModelAdmin):
-    list_display = ['title', 'created_at']
-    search_fields = ['title', 'description']
-    readonly_fields = ['created_at', 'updated_at']
+class Service(models.Model):
+    SERVICE_TYPES = [
+        ('keynote', 'Keynote Speaking'),
+        ('training', 'Corporate Training'),
+        ('consulting', 'Strategic Consulting'),
+    ]
     
-    fieldsets = (
-        ('Content', {
-            'fields': ('title', 'description', 'image')
-        }),
-        ('Bullet Points', {
-            'fields': ('bullet_points',),
-            'description': 'Enter each bullet point on a new line'
-        }),
-        ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
+    title = models.CharField(max_length=200)
+    service_type = models.CharField(max_length=50, choices=SERVICE_TYPES)
+    description = models.TextField()
+    icon_class = models.CharField(max_length=100, help_text="Font Awesome icon class (e.g., fas fa-microphone)")
+    topics = models.TextField(help_text="Enter topics separated by commas")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.title
 
-@admin.register(Service, site=admin_site)
-class ServiceAdmin(admin.ModelAdmin):
-    list_display = ['title', 'service_type', 'topic_count', 'created_at']
-    list_filter = ['service_type']
-    search_fields = ['title', 'description', 'topics']
-    readonly_fields = ['created_at', 'updated_at']
+class Testimonial(models.Model):
+    client_name = models.CharField(max_length=200)
+    position = models.CharField(max_length=200)
+    company = models.CharField(max_length=200)
+    content = models.TextField()
+    avatar = models.ImageField(upload_to='testimonial_avatars/', blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
-    fieldsets = (
-        ('Service Info', {
-            'fields': ('title', 'service_type', 'description')
-        }),
-        ('Display', {
-            'fields': ('icon_class', 'topics')
-        }),
-        ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
-    
-    def topic_count(self, obj):
-        if obj.topics:
-            return len(obj.topics.split(','))
-        return 0
-    topic_count.short_description = 'Topics'
+    def __str__(self):
+        return f"{self.client_name} - {self.company}"
 
-@admin.register(Testimonial, site=admin_site)
-class TestimonialAdmin(admin.ModelAdmin):
-    list_display = ['client_name', 'company', 'position', 'is_active', 'created_at', 'avatar_preview']
-    list_filter = ['is_active', 'company']
-    list_editable = ['is_active']
-    search_fields = ['client_name', 'company', 'position', 'content']
-    readonly_fields = ['created_at', 'updated_at', 'avatar_preview']
+class Event(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    image = models.ImageField(upload_to='event_images/', blank=True, null=True)
+    event_type = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
-    fieldsets = (
-        ('Client Info', {
-            'fields': ('client_name', 'position', 'company')
-        }),
-        ('Testimonial', {
-            'fields': ('content', 'avatar')
-        }),
-        ('Settings', {
-            'fields': ('is_active',)
-        }),
-        ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
-    
-    def avatar_preview(self, obj):
-        if obj.avatar:
-            return format_html('<img src="{}" style="width: 50px; height: 50px; object-fit: cover;" />', obj.avatar.url)
-        return "No Image"
-    avatar_preview.short_description = 'Preview'
+    def __str__(self):
+        return self.title
 
-@admin.register(Event, site=admin_site)
-class EventAdmin(admin.ModelAdmin):
-    list_display = ['title', 'event_type', 'created_at']
-    list_filter = ['event_type']
-    search_fields = ['title', 'description', 'event_type']
-    readonly_fields = ['created_at', 'updated_at']
+class NewsletterContent(models.Model):
+    title = models.CharField(max_length=200, default="Monthly Newsletter")
+    subtitle = models.CharField(max_length=300, default="Get exclusive insights and industry updates delivered to your inbox")
+    image = models.ImageField(upload_to='newsletter/', null=True, blank=True, help_text="Newsletter cover image")
+    benefits = models.TextField(default="Leadership Strategies\nIndustry Updates\nCase Studies\nEvent Announcements\nExclusive Content\nSuccess Stories", help_text="Add each benefit on a new line")
+    form_title = models.CharField(max_length=200, default="Join Our Community")
+    form_description = models.TextField(default="Get exclusive leadership insights, industry trends, and event updates delivered directly to your inbox each month.")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
-    fieldsets = (
-        ('Event Info', {
-            'fields': ('title', 'event_type', 'description')
-        }),
-        ('Image', {
-            'fields': ('image',)
-        }),
-        ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
+    class Meta:
+        verbose_name = "Newsletter Content"
+        verbose_name_plural = "Newsletter Content"
+        ordering = ['-updated_at']
+    
+    def __str__(self):
+        return f"Newsletter Content - {self.updated_at.strftime('%Y-%m-%d')}"
 
-@admin.register(NewsletterContent, site=admin_site)
-class NewsletterContentAdmin(admin.ModelAdmin):
-    list_display = ('title', 'subscriber_count', 'created_at', 'updated_at')
-    list_filter = ('created_at', 'updated_at')
-    search_fields = ('title', 'subtitle')
-    readonly_fields = ('created_at', 'updated_at', 'subscriber_count')
+class GalleryImage(models.Model):
+    EVENT_TYPE_CHOICES = [
+        ('corporate', 'Corporate Leadership'),
+        ('empowerment', 'Women Empowerment'),
+        ('hospitality', 'Hospitality Awards'),
+        ('latest', 'Latest Event'),
+        ('keynote', 'Keynote Speaking'),
+        ('training', 'Corporate Training'),
+    ]
     
-    fieldsets = (
-        ('Main Content', {
-            'fields': ('title', 'subtitle', 'image', 'form_title', 'form_description')
-        }),
-        ('Benefits', {
-            'fields': ('benefits',),
-            'description': 'Add each benefit on a new line. They will be displayed in two columns.'
-        }),
-        ('Statistics', {
-            'fields': ('subscriber_count',),
-            'classes': ('collapse',)
-        }),
-        ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
+    title = models.CharField(max_length=200)
+    image = models.ImageField(upload_to='gallery/')
+    event_type = models.CharField(max_length=50, choices=EVENT_TYPE_CHOICES, default='corporate')
+    description = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+    display_order = models.IntegerField(default=0, help_text="Higher number appears first")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
-    def subscriber_count(self, obj):
-        return NewsletterSubscription.objects.count()
-    subscriber_count.short_description = 'Total Subscribers'
+    class Meta:
+        verbose_name = "Gallery Image"
+        verbose_name_plural = "Gallery Images"
+        ordering = ['-display_order', '-created_at']
+    
+    def __str__(self):
+        return f"{self.title} - {self.get_event_type_display()}"
 
-@admin.register(GalleryImage, site=admin_site)
-class GalleryImageAdmin(admin.ModelAdmin):
-    list_display = ('title', 'event_type', 'display_order', 'is_active', 'created_at', 'image_preview')
-    list_filter = ('event_type', 'is_active', 'created_at')
-    search_fields = ('title', 'description')
-    list_editable = ('display_order', 'is_active')
-    readonly_fields = ('created_at', 'updated_at', 'image_preview')
-    
-    fieldsets = (
-        ('Basic Information', {
-            'fields': ('title', 'image', 'event_type', 'description')
-        }),
-        ('Display Settings', {
-            'fields': ('display_order', 'is_active')
-        }),
-        ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
-    
-    def image_preview(self, obj):
-        if obj.image:
-            return format_html('<img src="{}" style="width: 100px; height: auto;" />', obj.image.url)
-        return "No Image"
-    image_preview.short_description = 'Preview'
+# ============ FORM SUBMISSION MODELS ============
 
-@admin.register(ContactSubmission, site=admin_site)
-class ContactSubmissionAdmin(admin.ModelAdmin):
-    list_display = ('full_name', 'email', 'organization', 'event_type', 'status', 'submitted_at', 'contacted_status')
-    list_filter = ('status', 'event_type', 'submitted_at')
-    search_fields = ('full_name', 'email', 'organization', 'event_details')
-    list_editable = ('status',)
-    readonly_fields = ('submitted_at', 'contacted_at', 'user_info')
-    date_hierarchy = 'submitted_at'
+class ContactSubmission(models.Model):
+    STATUS_CHOICES = [
+        ('new', 'New'),
+        ('contacted', 'Contacted'),
+        ('booked', 'Booked'),
+        ('cancelled', 'Cancelled'),
+    ]
     
-    fieldsets = (
-        ('Contact Information', {
-            'fields': ('full_name', 'email', 'organization')
-        }),
-        ('Event Details', {
-            'fields': ('event_type', 'event_details')
-        }),
-        ('Status & Follow-up', {
-            'fields': ('status', 'contacted_at', 'notes')
-        }),
-        ('System Information', {
-            'fields': ('submitted_at', 'user_info'),
-            'classes': ('collapse',)
-        }),
-    )
+    full_name = models.CharField(max_length=200)
+    email = models.EmailField()
+    organization = models.CharField(max_length=200)
+    event_type = models.CharField(max_length=100)
+    event_details = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    contacted_at = models.DateTimeField(null=True, blank=True)
+    notes = models.TextField(blank=True)
     
-    actions = ['mark_as_contacted', 'mark_as_booked']
+    class Meta:
+        verbose_name = "Contact Form Submission"
+        verbose_name_plural = "Contact Form Submissions"
+        ordering = ['-submitted_at']
     
-    def contacted_status(self, obj):
-        if obj.contacted_at:
-            return format_html(
-                '<span style="color: green;">✓ Contacted</span><br><small>{}</small>',
-                obj.contacted_at.strftime('%Y-%m-%d %H:%M')
-            )
-        return format_html('<span style="color: orange;">Pending</span>')
-    contacted_status.short_description = 'Contact Status'
-    
-    def user_info(self, obj):
-        return format_html(
-            'Submitted: {}<br>Last updated: {}',
-            obj.submitted_at.strftime('%Y-%m-%d %H:%M:%S'),
-            obj.submitted_at.strftime('%Y-%m-%d %H:%M:%S')
-        )
-    user_info.short_description = 'Submission Details'
-    
-    def mark_as_contacted(self, request, queryset):
-        updated = queryset.update(status='contacted', contacted_at=timezone.now())
-        self.message_user(request, f'{updated} submission(s) marked as contacted.')
-    mark_as_contacted.short_description = "Mark selected as contacted"
-    
-    def mark_as_booked(self, request, queryset):
-        updated = queryset.update(status='booked')
-        self.message_user(request, f'{updated} submission(s) marked as booked.')
-    mark_as_booked.short_description = "Mark selected as booked"
+    def __str__(self):
+        return f"{self.full_name} - {self.organization}"
 
-@admin.register(NewsletterSubscription, site=admin_site)
-class NewsletterSubscriptionAdmin(admin.ModelAdmin):
-    list_display = ('email', 'name', 'source', 'is_active', 'subscribed_at', 'days_since_subscription')
-    list_filter = ('source', 'is_active', 'subscribed_at')
-    search_fields = ('email', 'name')
-    list_editable = ('is_active',)
-    readonly_fields = ('subscribed_at', 'last_email_sent')
-    date_hierarchy = 'subscribed_at'
+class NewsletterSubscription(models.Model):
+    SOURCE_CHOICES = [
+        ('newsletter_section', 'Newsletter Section'),
+        ('footer', 'Website Footer'),
+    ]
     
-    fieldsets = (
-        ('Subscriber Information', {
-            'fields': ('name', 'email', 'source', 'agreed_to_terms')
-        }),
-        ('Status', {
-            'fields': ('is_active',)
-        }),
-        ('Timestamps', {
-            'fields': ('subscribed_at', 'last_email_sent'),
-            'classes': ('collapse',)
-        }),
-    )
+    name = models.CharField(max_length=200, blank=True)
+    email = models.EmailField(unique=True)
+    source = models.CharField(max_length=50, choices=SOURCE_CHOICES, default='newsletter_section')
+    agreed_to_terms = models.BooleanField(default=True)
+    subscribed_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    last_email_sent = models.DateTimeField(null=True, blank=True)
     
-    actions = ['export_emails', 'deactivate_subscriptions']
+    class Meta:
+        verbose_name = "Newsletter Subscription"
+        verbose_name_plural = "Newsletter Subscriptions"
+        ordering = ['-subscribed_at']
     
-    def days_since_subscription(self, obj):
-        delta = timezone.now() - obj.subscribed_at
-        return delta.days
-    days_since_subscription.short_description = 'Days Subscribed'
-    
-    def export_emails(self, request, queryset):
-        emails = "\n".join([sub.email for sub in queryset])
-        self.message_user(request, f"Copied {queryset.count()} emails to clipboard.")
-        return emails
-    export_emails.short_description = "Export selected emails"
-    
-    def deactivate_subscriptions(self, request, queryset):
-        updated = queryset.update(is_active=False)
-        self.message_user(request, f'{updated} subscription(s) deactivated.')
-    deactivate_subscriptions.short_description = "Deactivate selected subscriptions"
+    def __str__(self):
+        return f"{self.email}"
 
-@admin.register(SystemLog, site=admin_site)
-class SystemLogAdmin(admin.ModelAdmin):
-    list_display = ('log_level_display', 'message_short', 'source', 'created_at', 'user_ip')
-    list_filter = ('log_level', 'source', 'created_at')
-    search_fields = ('message', 'source', 'user_ip')
-    readonly_fields = ('created_at', 'user_ip', 'user_agent')
-    date_hierarchy = 'created_at'
+class SystemLog(models.Model):
+    LOG_LEVELS = [
+        ('info', 'Info'),
+        ('warning', 'Warning'),
+        ('error', 'Error'),
+        ('success', 'Success'),
+    ]
     
-    fieldsets = (
-        ('Log Details', {
-            'fields': ('log_level', 'message', 'source')
-        }),
-        ('User Information', {
-            'fields': ('user_ip', 'user_agent'),
-            'classes': ('collapse',)
-        }),
-        ('Timestamp', {
-            'fields': ('created_at',),
-            'classes': ('collapse',)
-        }),
-    )
+    log_level = models.CharField(max_length=20, choices=LOG_LEVELS, default='info')
+    message = models.TextField()
+    source = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+    user_ip = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.TextField(blank=True)
     
-    actions = ['clear_old_logs']
+    class Meta:
+        verbose_name = "System Log"
+        verbose_name_plural = "System Logs"
+        ordering = ['-created_at']
     
-    def log_level_display(self, obj):
-        colors = {
-            'info': 'blue',
-            'warning': 'orange',
-            'error': 'red',
-            'success': 'green'
-        }
-        color = colors.get(obj.log_level, 'black')
-        return format_html(
-            '<span style="color: {}; font-weight: bold;">{}</span>',
-            color, obj.get_log_level_display()
-        )
-    log_level_display.short_description = 'Level'
-    
-    def message_short(self, obj):
-        if len(obj.message) > 50:
-            return f"{obj.message[:50]}..."
-        return obj.message
-    message_short.short_description = 'Message'
-    
-    def clear_old_logs(self, request, queryset):
-        # Keep logs from last 30 days
-        cutoff_date = timezone.now() - timedelta(days=30)
-        old_logs = SystemLog.objects.filter(created_at__lt=cutoff_date)
-        count = old_logs.count()
-        old_logs.delete()
-        self.message_user(request, f'Deleted {count} logs older than 30 days.')
-    clear_old_logs.short_description = "Clear logs older than 30 days"
-
-# ============ REGISTER DEFAULT ADMIN ============
-# Replace default admin site with custom one
-from django.contrib.admin.sites import site as default_site
-default_site.__class__ = FusionForceAdminSite
+    def __str__(self):
+        return f"{self.get_log_level_display()} - {self.message[:50]}"
