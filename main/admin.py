@@ -1,4 +1,4 @@
-﻿# admin.py
+﻿# admin.py - COMPLETE VERSION WITH FUSION-FORCE BRANDING
 from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
@@ -6,8 +6,8 @@ from django.db.models import Count
 from django.utils import timezone
 from datetime import timedelta
 from .models import (
-    HomeContent, AboutContent, Service, NewsletterContent, 
-    Testimonial, Event, GalleryImage, ContactSubmission, 
+    HomeContent, AboutContent, Service, NewsletterContent,
+    Testimonial, Event, GalleryImage, ContactSubmission,
     NewsletterSubscription, SystemLog
 )
 
@@ -23,29 +23,39 @@ class FusionForceAdminSite(admin.AdminSite):
         """
         app_list = super().get_app_list(request, app_label)
         
-        # Custom grouping
+        # Custom grouping for Fusion Force
         for app in app_list:
             if app['app_label'] == 'main':  # Your app name
                 # Group content management
                 content_models = ['HomeContent', 'AboutContent', 'NewsletterContent']
+                form_models = ['ContactSubmission', 'NewsletterSubscription']
+                display_models = ['Service', 'Testimonial', 'Event', 'GalleryImage']
+                system_models = ['SystemLog']
+                
                 content_list = []
-                other_models = []
+                form_list = []
+                display_list = []
+                system_list = []
                 
                 for model in app['models']:
                     if model['object_name'] in content_models:
                         content_list.append(model)
-                    else:
-                        other_models.append(model)
+                    elif model['object_name'] in form_models:
+                        form_list.append(model)
+                    elif model['object_name'] in display_models:
+                        display_list.append(model)
+                    elif model['object_name'] in system_models:
+                        system_list.append(model)
                 
-                # Reorganize
-                app['models'] = content_list + other_models
+                # Reorganize with custom sections
+                app['models'] = content_list + display_list + form_list + system_list
         
         return app_list
 
 # Create custom admin site instance
 admin_site = FusionForceAdminSite(name='fusionforce_admin')
 
-# ============ CUSTOM ADMIN CLASSES ============
+# ============ ADMIN CLASSES ============
 @admin.register(HomeContent, site=admin_site)
 class HomeContentAdmin(admin.ModelAdmin):
     list_display = ['title', 'is_active', 'created_at', 'admin_actions']
@@ -69,7 +79,7 @@ class HomeContentAdmin(admin.ModelAdmin):
     
     def admin_actions(self, obj):
         return format_html(
-            '<a href="{}" class="button">View Site</a>',
+            '<a href="{}" class="button" target="_blank">View Site</a>',
             reverse('home')
         )
     admin_actions.short_description = 'Actions'
@@ -226,15 +236,13 @@ class GalleryImageAdmin(admin.ModelAdmin):
         return "No Image"
     image_preview.short_description = 'Preview'
 
-# ============ FORM SUBMISSION ADMIN CLASSES ============
-
 @admin.register(ContactSubmission, site=admin_site)
 class ContactSubmissionAdmin(admin.ModelAdmin):
     list_display = ('full_name', 'email', 'organization', 'event_type', 'status', 'submitted_at', 'contacted_status')
     list_filter = ('status', 'event_type', 'submitted_at')
     search_fields = ('full_name', 'email', 'organization', 'event_details')
     list_editable = ('status',)
-    readonly_fields = ('submitted_at', 'contacted_at', 'notes', 'user_info')
+    readonly_fields = ('submitted_at', 'contacted_at', 'user_info')
     date_hierarchy = 'submitted_at'
     
     fieldsets = (
@@ -258,7 +266,7 @@ class ContactSubmissionAdmin(admin.ModelAdmin):
     def contacted_status(self, obj):
         if obj.contacted_at:
             return format_html(
-                '<span style="color: green;">âœ“ Contacted</span><br><small>{}</small>',
+                '<span style="color: green;">✓ Contacted</span><br><small>{}</small>',
                 obj.contacted_at.strftime('%Y-%m-%d %H:%M')
             )
         return format_html('<span style="color: orange;">Pending</span>')
@@ -375,29 +383,7 @@ class SystemLogAdmin(admin.ModelAdmin):
         self.message_user(request, f'Deleted {count} logs older than 30 days.')
     clear_old_logs.short_description = "Clear logs older than 30 days"
 
-# ============ CUSTOM DASHBOARD VIEW ============
-class DashboardView(admin.AdminSite):
-    def index(self, request, extra_context=None):
-        # Get statistics
-        stats = {
-            'total_submissions': ContactSubmission.objects.count(),
-            'new_submissions': ContactSubmission.objects.filter(status='new').count(),
-            'total_subscribers': NewsletterSubscription.objects.count(),
-            'active_subscribers': NewsletterSubscription.objects.filter(is_active=True).count(),
-            'recent_logs': SystemLog.objects.order_by('-created_at')[:10],
-            'recent_submissions': ContactSubmission.objects.order_by('-submitted_at')[:5],
-        }
-        
-        # Add to context
-        extra_context = extra_context or {}
-        extra_context.update({
-            'stats': stats,
-            'dashboard_title': 'FUSION-FORCE ADMIN DASHBOARD',
-        })
-        
-        return super().index(request, extra_context)
-
-# Replace the default admin site
-admin.site = admin_site
-admin.sites.site = admin_site
-admin.autodiscover()
+# ============ REGISTER DEFAULT ADMIN ============
+# Replace default admin site with custom one
+from django.contrib.admin.sites import site as default_site
+default_site.__class__ = FusionForceAdminSite

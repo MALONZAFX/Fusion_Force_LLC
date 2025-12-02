@@ -1,5 +1,5 @@
-﻿# views.py
-from django.contrib import messages
+﻿# views.py - FIXED WITH ALL IMPORTS
+from django.shortcuts import render  # ← CRITICAL: ADD THIS
 from django.http import JsonResponse
 from .models import (
     HomeContent, AboutContent, Service, 
@@ -83,7 +83,6 @@ def home(request):
                 'company': 'IMEX America',
                 'content': 'Pamela doesn\'t just speak, she transforms. Her sessions ignite courage, clarity, and connection.',
                 'avatar': None,
-                'avatar_base64': None
             },
             {
                 'client_name': 'Vice President',
@@ -91,7 +90,6 @@ def home(request):
                 'company': 'Luxury Hotel Group',
                 'content': 'Her energy is unmatched, our team left inspired and aligned.',
                 'avatar': None,
-                'avatar_base64': None
             },
             {
                 'client_name': 'Development Director',
@@ -99,7 +97,6 @@ def home(request):
                 'company': 'Russian Hospitality Awards',
                 'content': 'Pamela was exceptionally well-spoken, engaging, and demonstrated a deep understanding of the hospitality industry.',
                 'avatar': None,
-                'avatar_base64': None
             }
         ]
     
@@ -243,9 +240,3 @@ def about(request):
             bullet_points="Keynote Speaker\nLeadership Trainer\nHospitality Expert\nGlobal Experience"
         )
     return render(request, 'main/about.html', {'about_content': about_content})
-
-
-
-
-
-
