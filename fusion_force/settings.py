@@ -57,16 +57,32 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'fusion_force.wsgi.application'
-
-# DATABASE - DUMMY (NO DATABASE)
+# DATABASE - PROPERLY DISABLED
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.dummy',
+        'NAME': 'dummy',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
     }
 }
 
+# DISABLE MIGRATIONS COMPLETELY
+MIGRATION_MODULES = {
+    'admin': None,
+    'auth': None,
+    'contenttypes': None,
+    'sessions': None,
+    'main': None,
+}
+
+# DISABLE DATABASE ROUTERS
+DATABASE_ROUTERS = []
+
 print("=== DATABASE DEBUG ===")
-print("🚫 DATABASE DISABLED - Using dummy backend")
+print("🚫 DATABASE COMPLETELY DISABLED - No migrations will run")
 print("=====================")
 
 # PASSWORD VALIDATORS (WON'T BE USED)
