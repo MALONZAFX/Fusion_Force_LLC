@@ -1,4 +1,6 @@
 ﻿# models.py - NO CIRCULAR IMPORTS!
+# main/models.py - COMMENT OUT FOR NOW
+'''
 from django.db import models
 
 class AboutContent(models.Model):
@@ -174,3 +176,5 @@ class SystemLog(models.Model):
     
     def __str__(self):
         return f"{self.get_log_level_display()} - {self.message[:50]}"
+
+'''        
