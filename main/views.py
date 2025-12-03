@@ -1,8 +1,8 @@
-﻿# views.py - FIXED WITH ALL IMPORTS
-from django.shortcuts import render  # ← CRITICAL: ADD THIS
+﻿# views.py - COMPLETE FIXED VERSION
+from django.shortcuts import render 
 from django.http import JsonResponse
 from .models import (
-    HomeContent, AboutContent, Service, 
+    AboutContent, Service, 
     Testimonial, Event, NewsletterContent, GalleryImage,
     ContactSubmission, NewsletterSubscription, SystemLog
 )
@@ -23,16 +23,9 @@ def log_action(message, level='info', source='views', request=None):
     except Exception as e:
         print(f"Failed to log: {e}")
 
+# ============ HOME VIEW ============
 def home(request):
-    # Get active home content or use default
-    home_content = HomeContent.objects.filter(is_active=True).first()
-    if not home_content:
-        home_content = HomeContent.objects.create(
-            title="Fusion Force LLC",
-            subtitle="Pamela Robinson - Making the Impossible Possible through transformative speaking, corporate training, and leadership development.",
-            is_active=True
-        )
-    
+    """Home page view"""
     # Get about content or create default
     about_content = AboutContent.objects.first()
     if not about_content:
@@ -104,7 +97,6 @@ def home(request):
     duplicated_testimonials = testimonial_list * 2
     
     context = {
-        'home_content': home_content,
         'about_content': about_content,
         'services': services,
         'testimonials': duplicated_testimonials,
@@ -118,6 +110,7 @@ def home(request):
     
     return render(request, 'main/index.html', context)
 
+# ============ CONTACT SUBMIT ============
 def contact_submit(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
@@ -167,6 +160,7 @@ def contact_submit(request):
         'message': 'Invalid request method.'
     }, status=405)
 
+# ============ NEWSLETTER SUBMIT ============
 def newsletter_submit(request):
     if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
@@ -231,6 +225,7 @@ def newsletter_submit(request):
         'message': 'Invalid request method.'
     }, status=405)
 
+# ============ ABOUT VIEW ============
 def about(request):
     about_content = AboutContent.objects.first()
     if not about_content:

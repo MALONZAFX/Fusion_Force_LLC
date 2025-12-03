@@ -156,15 +156,14 @@
     
     {% load static %}
     
- 
+    {% load static %}
+
     <!-- Hero Section Start -->
     <div class="container-fluid p-0 mb-5" id="home">
         <div class="position-relative">
-            {% if home_content and home_content.hero_image %}
-            <img class="img-fluid" src="{{ home_content.hero_image.url }}" alt="Pamela speaking to an audience" style="height: 788px; width: 100%; object-fit: cover;">
-            {% else %}
-            <img class="img-fluid" src="{% static 'images/aboutz.JPG' %}" alt="Pamela speaking to an audience" style="height: 788px; width: 100%; object-fit: cover;">
-            {% endif %}
+            <!-- Static hero image - no database needed -->
+            <img class="img-fluid" src="{% static 'images/aboutz.JPG' %}" alt="Pamela Robinson speaking to an audience" style="height: 788px; width: 100%; object-fit: cover;">
+            
             <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: rgba(24, 29, 56, .5);">
                 <div class="container">
                     <div class="row justify-content-center" style="margin-top: 180px;">
@@ -174,13 +173,18 @@
                                 The Power to Train<br>
                                 The Courage to Inspire
                             </h1>
-                            {% if home_content %}
-                            <p class="fs-5 text-white mb-4 pb-2">{{ home_content.subtitle }}</p>
-                            {% else %}
-                            <p class="fs-5 text-white mb-4 pb-2">Pamela Robinson - Making the <span style="font-weight:bold;">Impossible Possible</span> through transformative speaking, corporate training, and leadership development.</p>
-                            {% endif %}
-                            <a href="#contact" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Book Pamela</a>
-                            <a href="#about" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Learn More</a>
+                            
+                            <!-- REMOVED DATABASE DEPENDENCY - HARDCODED TEXT -->
+                            <p class="fs-5 text-white mb-4 pb-2">
+                                Pamela Robinson - Making the <span style="font-weight:bold;">Impossible Possible</span> through transformative speaking, corporate training, and leadership development.
+                            </p>
+                            
+                            <a href="#contact" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">
+                                <i class="fas fa-calendar-check me-2"></i>Book Pamela
+                            </a>
+                            <a href="#about" class="btn btn-light py-md-3 px-md-5 animated slideInRight">
+                                <i class="fas fa-user me-2"></i>Learn More
+                            </a>
                         </div>
                     </div>
                 </div>

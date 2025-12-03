@@ -6,7 +6,7 @@ from django.db.models import Count
 from django.utils import timezone
 from datetime import timedelta
 from .models import (
-    HomeContent, AboutContent, Service, NewsletterContent,
+     AboutContent, Service, NewsletterContent,
     Testimonial, Event, GalleryImage, ContactSubmission,
     NewsletterSubscription, SystemLog
 )
@@ -27,7 +27,7 @@ class FusionForceAdminSite(admin.AdminSite):
         for app in app_list:
             if app['app_label'] == 'main':  # Your app name
                 # Group content management
-                content_models = ['HomeContent', 'AboutContent', 'NewsletterContent']
+                content_models = [ 'AboutContent', 'NewsletterContent']
                 form_models = ['ContactSubmission', 'NewsletterSubscription']
                 display_models = ['Service', 'Testimonial', 'Event', 'GalleryImage']
                 system_models = ['SystemLog']
@@ -56,33 +56,6 @@ class FusionForceAdminSite(admin.AdminSite):
 admin_site = FusionForceAdminSite(name='fusionforce_admin')
 
 # ============ ADMIN CLASSES ============
-@admin.register(HomeContent, site=admin_site)
-class HomeContentAdmin(admin.ModelAdmin):
-    list_display = ['title', 'is_active', 'created_at', 'admin_actions']
-    list_filter = ['is_active', 'created_at']
-    list_editable = ['is_active']
-    search_fields = ['title', 'subtitle']
-    readonly_fields = ['created_at', 'updated_at']
-    
-    fieldsets = (
-        ('Content', {
-            'fields': ('title', 'subtitle', 'hero_image')
-        }),
-        ('Settings', {
-            'fields': ('is_active',)
-        }),
-        ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
-    
-    def admin_actions(self, obj):
-        return format_html(
-            '<a href="{}" class="button" target="_blank">View Site</a>',
-            reverse('home')
-        )
-    admin_actions.short_description = 'Actions'
 
 @admin.register(AboutContent, site=admin_site)
 class AboutContentAdmin(admin.ModelAdmin):
