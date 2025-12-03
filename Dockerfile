@@ -15,31 +15,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy ALL project files
 COPY . .
 
-# Debug: Show migration files
-RUN echo "=== DEBUG: Checking migration files ===" && \
-    if [ -d "main/migrations" ]; then \
-        echo "✓ migrations directory exists" && \
-        ls -la main/migrations/ && \
-        echo "Migration files found:" && \
-        find main/migrations -name "*.py" -type f; \
-    else \
-        echo "✗ No migrations directory found" && \
-        mkdir -p main/migrations && \
-        touch main/migrations/__init__.py; \
-    fi
-
-# Create migrations if missing
-RUN echo "=== Creating migrations ===" && \
-    python manage.py makemigrations main --noinput || \
-    echo "Migrations already exist or failed"
-
-# Run ALL migrations
-RUN echo "=== Running migrations ===" && \
-    python manage.py migrate --noinput
-
-# Collect static files
-RUN python manage.py collectstatic --noinput --clear
-
 # Create non-root user for security
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
@@ -47,5 +22,24 @@ USER appuser
 # Expose port 8080 (Railway's default)
 EXPOSE 8080
 
-# Start server with HARDCODED port 8080 (NOT $PORT)
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "3", "fusionforce.wsgi:application"]
+# Create startup script that runs migrations THEN starts server
+RUN echo '#!/bin/bash\n\
+set -e\n\
+\n\
+echo "=== Starting Fusion Force LLC ==="\n\
+\n\
+# Run migrations\n\
+echo "Running migrations..."\n\
+python manage.py migrate --noinput\n\
+\n\
+# Collect static files\n\
+echo "Collecting static files..."\n\
+python manage.py collectstatic --noinput --clear\n\
+\n\
+# Start server\n\
+echo "Starting Gunicorn on port 8080..."\n\
+exec gunicorn --bind 0.0.0.0:8080 --workers 3 --access-logfile - --error-logfile - fusionforce.wsgi:application\n\
+' > /app/start.sh && chmod +x /app/start.sh
+
+# Use the startup script
+CMD ["/app/start.sh"]
