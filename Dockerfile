@@ -30,8 +30,8 @@ RUN python manage.py collectstatic --noinput --clear
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
 
-# Expose port
+# Expose port (Railway uses 8080 by default)
 EXPOSE 8080
 
-# Start server
+# Use hardcoded port 8080 instead of $PORT
 CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "3", "yourproject.wsgi:application"]
