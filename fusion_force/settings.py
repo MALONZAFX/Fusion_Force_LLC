@@ -57,14 +57,27 @@ TEMPLATES = [
 WSGI_APPLICATION = 'fusion_force.wsgi.application'
 
 # DATABASE - POSTGRESQL READY
-DATABASES = {
-    'default': dj_database_url.config(
-        # Automatically uses DATABASE_URL environment variable from Railway
-        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
-}
+db_url = os.getenv('DATABASE_URL', '')
+if db_url and 'postgresql://' in db_url:
+    print("🚨 FORCING POSTGRESQL CONNECTION")
+    DATABASES = {
+        'default': dj_database_url.parse(db_url, conn_max_age=600)
+    }
+else:
+    print("⚠️ Using SQLite (local development)")
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
+
+print("=== DATABASE DEBUG ===")
+print(f"DATABASE_URL exists: {'DATABASE_URL' in os.environ}")
+print(f"DATABASE_URL value: {os.getenv('DATABASE_URL', 'NOT SET')[:50]}...")
+print(f"Database engine: {DATABASES['default']['ENGINE']}")
+print("=====================")
 
 # PASSWORDS
 AUTH_PASSWORD_VALIDATORS = [
