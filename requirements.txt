@@ -1,4 +1,4 @@
 Django>=4.2
 gunicorn
 whitenoise
-# No database packages
+python-dotenv  # ADD THIS LINE
