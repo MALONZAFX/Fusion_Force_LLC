@@ -7,8 +7,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Collect static files
-RUN python manage.py collectstatic --noinput --clear
-
-# Start server - NO MIGRATIONS
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "3", "fusion_force.wsgi:application"]
+# No migrations needed
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "fusion_force.wsgi:application"]

@@ -237,7 +237,7 @@
         </div>
     </div>
     <!-- About End -->
-    <!-- Services Start -->
+   <!-- Services Start -->
 <div class="container-xxl py-5" id="services">
     <div class="container">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
@@ -246,37 +246,16 @@
             <p class="lead mb-5">Inspiring talks. Transformative training. Strategic guidance.</p>
         </div>
 
-        <!-- Key Services Grid -->
+        <!-- HARDCODED SERVICES (NO DATABASE) -->
         <div class="row g-4">
-            {% for service in services %}
-            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.{{ forloop.counter }}s">
-                <div class="service-simple text-center p-4 h-100">
-                    <div class="service-icon mb-4">
-                        <i class="{{ service.icon_class }} fa-3x text-primary"></i>
-                    </div>
-                    <h4 class="mb-3">{{ service.title }}</h4>
-                    <p class="mb-4">{{ service.description }}</p>
-                    <div class="service-topics">
-                        {% for topic in service.topics.split|slice:":5" %}
-                        <span class="topic-tag">{{ topic }}</span>
-                        {% endfor %}
-                    </div>
-                    <a href="#contact" class="btn btn-primary mt-3">
-                        {% if service.service_type == 'keynote' %}Book Pamela
-                        {% elif service.service_type == 'training' %}Train My Team
-                        {% else %}Get Expert Advice{% endif %}
-                    </a>
-                </div>
-            </div>
-            {% empty %}
-            <!-- Default services if none in database -->
+            <!-- Service 1: Keynote Speaking -->
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                 <div class="service-simple text-center p-4 h-100">
                     <div class="service-icon mb-4">
                         <i class="fas fa-microphone fa-3x text-primary"></i>
                     </div>
                     <h4 class="mb-3">Keynote Speaking</h4>
-                    <p class="mb-4">Inspire your team with powerful messages that drive action and create lasting change.</p>
+                    <p class="mb-4">Inspire your team with powerful messages that drive action and create lasting change. Pamela delivers transformative keynotes that ignite courage, clarity, and connection.</p>
                     <div class="service-topics">
                         <span class="topic-tag">Emotional Intelligence</span>
                         <span class="topic-tag">Leadership Trust</span>
@@ -287,13 +266,15 @@
                     <a href="#contact" class="btn btn-primary mt-3">Book Pamela</a>
                 </div>
             </div>
+            
+            <!-- Service 2: Corporate Training -->
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.2s">
                 <div class="service-simple text-center p-4 h-100">
                     <div class="service-icon mb-4">
                         <i class="fas fa-users fa-3x text-primary"></i>
                     </div>
                     <h4 class="mb-3">Corporate Training</h4>
-                    <p class="mb-4">Develop your team with proven frameworks that boost performance and engagement.</p>
+                    <p class="mb-4">Develop your team with proven frameworks that boost performance and engagement. Transformative training programs for leadership, customer service, and team collaboration.</p>
                     <div class="service-topics">
                         <span class="topic-tag">Leadership Training</span>
                         <span class="topic-tag">Customer Service Excellence</span>
@@ -304,13 +285,15 @@
                     <a href="#contact" class="btn btn-primary mt-3">Train My Team</a>
                 </div>
             </div>
+            
+            <!-- Service 3: Sales & Marketing Support -->
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
                 <div class="service-simple text-center p-4 h-100">
                     <div class="service-icon mb-4">
                         <i class="fas fa-chart-line fa-3x text-primary"></i>
                     </div>
                     <h4 class="mb-3">Sales & Marketing Support</h4>
-                    <p class="mb-4">Specialized support for hospitality businesses seeking to elevate sales and marketing performance.</p>
+                    <p class="mb-4">Specialized support for hospitality businesses seeking to elevate sales and marketing performance. Increase market share, revenue growth, and occupancy rates.</p>
                     <div class="service-topics">
                         <span class="topic-tag">Sales Strategy</span>
                         <span class="topic-tag">Increasing Market Share</span>
@@ -321,8 +304,8 @@
                     <a href="#contact" class="btn btn-primary mt-3">Get Expert Advice</a>
                 </div>
             </div>
-            {% endfor %}
         </div>
+        <!-- END HARDCODED SERVICES -->
 
         <!-- Proven Results Counter Section -->
         <div class="row mt-5 pt-5">
@@ -460,10 +443,8 @@
         <div class="text-center py-5">
             <i class="fas fa-images fa-4x text-muted mb-3"></i>
             <h4 class="text-muted">No Gallery Images Yet</h4>
-            <p class="text-muted">Upload event images through the admin dashboard</p>
-            <a href="/admin/main/galleryimage/add/" class="btn btn-primary mt-3">
-                <i class="fas fa-upload me-2"></i>Upload Gallery Images
-            </a>
+            <p class="text-muted">Admin Will Upload event images Soon</p>
+           
         </div>
         {% endif %}
     </div>

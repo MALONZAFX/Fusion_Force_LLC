@@ -1,4 +1,5 @@
 ﻿# admin.py - COMPLETE VERSION WITH FUSION-FORCE BRANDING
+'''
 from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
@@ -360,3 +361,5 @@ class SystemLogAdmin(admin.ModelAdmin):
 # Replace default admin site with custom one
 from django.contrib.admin.sites import site as default_site
 default_site.__class__ = FusionForceAdminSite
+
+'''

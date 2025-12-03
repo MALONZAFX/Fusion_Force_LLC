@@ -1,5 +1,4 @@
 Django>=4.2
 gunicorn
 whitenoise
-python-dotenv
-# REMOVE: psycopg2-binary
+# No database packages
