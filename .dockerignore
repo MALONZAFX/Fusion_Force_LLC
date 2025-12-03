@@ -1,0 +1,27 @@
+# Exclude unnecessary files
+*.pyc
+__pycache__
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+.git
+.gitignore
+README.md
+docker-compose.yml
+.vscode
+.idea
+*.log
+*.sqlite3
+*.db
+media/
+staticfiles/
+coverage/
+.DS_Store
+Thumbs.db
+
+# BUT INCLUDE MIGRATIONS!
+!*/migrations/
+!*/migrations/*.py
