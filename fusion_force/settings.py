@@ -84,7 +84,6 @@ DATABASE_ROUTERS = []
 print("=== DATABASE DEBUG ===")
 print("🚫 DATABASE COMPLETELY DISABLED - No migrations will run")
 print("=====================")
-
 # PASSWORD VALIDATORS (WON'T BE USED)
 AUTH_PASSWORD_VALIDATORS = [
     {
