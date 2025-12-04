@@ -1,7 +1,16 @@
 ﻿# models.py - NO CIRCULAR IMPORTS!
-# main/models.py - COMMENT OUT FOR NOW
-'''
 from django.db import models
+
+class HomeContent(models.Model):
+    title = models.CharField(max_length=200, default="Fusion Force LLC")
+    subtitle = models.TextField(default="Pamela Robinson - Making the Impossible Possible through transformative speaking, corporate training, and leadership development.")
+    hero_image = models.ImageField(upload_to='home_images/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return self.title
 
 class AboutContent(models.Model):
     title = models.CharField(max_length=200, default="Pamela Robinson")
@@ -176,5 +185,3 @@ class SystemLog(models.Model):
     
     def __str__(self):
         return f"{self.get_log_level_display()} - {self.message[:50]}"
-
-'''        

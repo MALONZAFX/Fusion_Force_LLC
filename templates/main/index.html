@@ -156,14 +156,15 @@
     
     {% load static %}
     
-    {% load static %}
-
+ 
     <!-- Hero Section Start -->
     <div class="container-fluid p-0 mb-5" id="home">
         <div class="position-relative">
-            <!-- Static hero image - no database needed -->
-            <img class="img-fluid" src="{% static 'images/aboutz.JPG' %}" alt="Pamela Robinson speaking to an audience" style="height: 788px; width: 100%; object-fit: cover;">
-            
+            {% if home_content and home_content.hero_image %}
+            <img class="img-fluid" src="{{ home_content.hero_image.url }}" alt="Pamela speaking to an audience" style="height: 788px; width: 100%; object-fit: cover;">
+            {% else %}
+            <img class="img-fluid" src="{% static 'images/aboutz.JPG' %}" alt="Pamela speaking to an audience" style="height: 788px; width: 100%; object-fit: cover;">
+            {% endif %}
             <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: rgba(24, 29, 56, .5);">
                 <div class="container">
                     <div class="row justify-content-center" style="margin-top: 180px;">
@@ -173,18 +174,13 @@
                                 The Power to Train<br>
                                 The Courage to Inspire
                             </h1>
-                            
-                            <!-- REMOVED DATABASE DEPENDENCY - HARDCODED TEXT -->
-                            <p class="fs-5 text-white mb-4 pb-2">
-                                Pamela Robinson - Making the <span style="font-weight:bold;">Impossible Possible</span> through transformative speaking, corporate training, and leadership development.
-                            </p>
-                            
-                            <a href="#contact" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">
-                                <i class="fas fa-calendar-check me-2"></i>Book Pamela
-                            </a>
-                            <a href="#about" class="btn btn-light py-md-3 px-md-5 animated slideInRight">
-                                <i class="fas fa-user me-2"></i>Learn More
-                            </a>
+                            {% if home_content %}
+                            <p class="fs-5 text-white mb-4 pb-2">{{ home_content.subtitle }}</p>
+                            {% else %}
+                            <p class="fs-5 text-white mb-4 pb-2">Pamela Robinson - Making the <span style="font-weight:bold;">Impossible Possible</span> through transformative speaking, corporate training, and leadership development.</p>
+                            {% endif %}
+                            <a href="#contact" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Book Pamela</a>
+                            <a href="#about" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Learn More</a>
                         </div>
                     </div>
                 </div>
@@ -237,7 +233,7 @@
         </div>
     </div>
     <!-- About End -->
-   <!-- Services Start -->
+    <!-- Services Start -->
 <div class="container-xxl py-5" id="services">
     <div class="container">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
@@ -246,16 +242,37 @@
             <p class="lead mb-5">Inspiring talks. Transformative training. Strategic guidance.</p>
         </div>
 
-        <!-- HARDCODED SERVICES (NO DATABASE) -->
+        <!-- Key Services Grid -->
         <div class="row g-4">
-            <!-- Service 1: Keynote Speaking -->
+            {% for service in services %}
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.{{ forloop.counter }}s">
+                <div class="service-simple text-center p-4 h-100">
+                    <div class="service-icon mb-4">
+                        <i class="{{ service.icon_class }} fa-3x text-primary"></i>
+                    </div>
+                    <h4 class="mb-3">{{ service.title }}</h4>
+                    <p class="mb-4">{{ service.description }}</p>
+                    <div class="service-topics">
+                        {% for topic in service.topics.split|slice:":5" %}
+                        <span class="topic-tag">{{ topic }}</span>
+                        {% endfor %}
+                    </div>
+                    <a href="#contact" class="btn btn-primary mt-3">
+                        {% if service.service_type == 'keynote' %}Book Pamela
+                        {% elif service.service_type == 'training' %}Train My Team
+                        {% else %}Get Expert Advice{% endif %}
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <!-- Default services if none in database -->
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                 <div class="service-simple text-center p-4 h-100">
                     <div class="service-icon mb-4">
                         <i class="fas fa-microphone fa-3x text-primary"></i>
                     </div>
                     <h4 class="mb-3">Keynote Speaking</h4>
-                    <p class="mb-4">Inspire your team with powerful messages that drive action and create lasting change. Pamela delivers transformative keynotes that ignite courage, clarity, and connection.</p>
+                    <p class="mb-4">Inspire your team with powerful messages that drive action and create lasting change.</p>
                     <div class="service-topics">
                         <span class="topic-tag">Emotional Intelligence</span>
                         <span class="topic-tag">Leadership Trust</span>
@@ -266,15 +283,13 @@
                     <a href="#contact" class="btn btn-primary mt-3">Book Pamela</a>
                 </div>
             </div>
-            
-            <!-- Service 2: Corporate Training -->
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.2s">
                 <div class="service-simple text-center p-4 h-100">
                     <div class="service-icon mb-4">
                         <i class="fas fa-users fa-3x text-primary"></i>
                     </div>
                     <h4 class="mb-3">Corporate Training</h4>
-                    <p class="mb-4">Develop your team with proven frameworks that boost performance and engagement. Transformative training programs for leadership, customer service, and team collaboration.</p>
+                    <p class="mb-4">Develop your team with proven frameworks that boost performance and engagement.</p>
                     <div class="service-topics">
                         <span class="topic-tag">Leadership Training</span>
                         <span class="topic-tag">Customer Service Excellence</span>
@@ -285,15 +300,13 @@
                     <a href="#contact" class="btn btn-primary mt-3">Train My Team</a>
                 </div>
             </div>
-            
-            <!-- Service 3: Sales & Marketing Support -->
             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
                 <div class="service-simple text-center p-4 h-100">
                     <div class="service-icon mb-4">
                         <i class="fas fa-chart-line fa-3x text-primary"></i>
                     </div>
                     <h4 class="mb-3">Sales & Marketing Support</h4>
-                    <p class="mb-4">Specialized support for hospitality businesses seeking to elevate sales and marketing performance. Increase market share, revenue growth, and occupancy rates.</p>
+                    <p class="mb-4">Specialized support for hospitality businesses seeking to elevate sales and marketing performance.</p>
                     <div class="service-topics">
                         <span class="topic-tag">Sales Strategy</span>
                         <span class="topic-tag">Increasing Market Share</span>
@@ -304,8 +317,8 @@
                     <a href="#contact" class="btn btn-primary mt-3">Get Expert Advice</a>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        <!-- END HARDCODED SERVICES -->
 
         <!-- Proven Results Counter Section -->
         <div class="row mt-5 pt-5">
@@ -443,8 +456,8 @@
         <div class="text-center py-5">
             <i class="fas fa-images fa-4x text-muted mb-3"></i>
             <h4 class="text-muted">No Gallery Images Yet</h4>
-            <p class="text-muted">Admin Will Upload event images Soon</p>
-           
+            <p class="text-muted">To Be Uploaded By Admin </p>
+            
         </div>
         {% endif %}
     </div>
@@ -535,7 +548,7 @@
                     {% if newsletter_content and newsletter_content.image %}
                     <img class="img-fluid w-100 h-100" src="{{ newsletter_content.image.url }}" alt="Fusion Force Monthly Insights" style="object-fit: cover; min-height: 400px;">
                     {% else %}
-                    <img class="img-fluid w-100 h-100" src="{% static 'images/NOV.JPG' %}" alt="Fusion Force Monthly Insights" style="object-fit: cover; min-height: 400px;">
+                    <img class="img-fluid w-100 h-100" src="{% static 'images/DEC.JPG' %}" alt="Fusion Force Monthly Insights" style="object-fit: cover; min-height: 400px;">
                     {% endif %}
                     <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(5, 62, 145, 0.4);">
                         <div class="text-center text-white p-4">
