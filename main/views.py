@@ -1,264 +1,268 @@
-﻿# views.py
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib import messages
+﻿from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from .models import (
-    HomeContent, AboutContent, Service, 
-    Testimonial, Event, NewsletterContent, GalleryImage,
-    ContactSubmission, NewsletterSubscription, SystemLog
-)
-from .forms import ContactForm, NewsletterForm
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 import json
+import logging
+from django.db import IntegrityError
 
-def log_action(message, level='info', source='views', request=None):
-    """Helper function to log actions"""
+from .models import (
+    SiteSettings, HeroImage, AboutSection, Service,
+    ImpactResult, GalleryImage, Testimonial,
+    NewsletterContent, ContactSubmission, NewsletterSubscription,
+    SystemLog
+)
+
+logger = logging.getLogger(__name__)
+
+def log_system_action(message, level='info', source='views', request=None):
+    """Helper to log system actions"""
     try:
-        log = SystemLog.objects.create(
+        SystemLog.objects.create(
             log_level=level,
             message=message,
             source=source,
-            user_ip=request.META.get('REMOTE_ADDR') if request else None,
+            user_ip=request.META.get('REMOTE_ADDR', '') if request else '',
             user_agent=request.META.get('HTTP_USER_AGENT', '') if request else ''
         )
-        return log
     except Exception as e:
-        print(f"Failed to log: {e}")
+        logger.error(f"Failed to log action: {e}")
 
 def home(request):
-    # Get active home content or use default
-    home_content = HomeContent.objects.filter(is_active=True).first()
-    if not home_content:
-        home_content = HomeContent.objects.create(
-            title="Fusion Force LLC",
-            subtitle="Pamela Robinson - Making the Impossible Possible through transformative speaking, corporate training, and leadership development.",
+    """Main home view that serves the index.html"""
+    
+    try:
+        # Get site settings
+        site_settings = SiteSettings.objects.first()
+        
+        # Get hero images (for desktop and mobile)
+        hero_images = HeroImage.objects.filter(is_active=True).order_by('order')
+        
+        # Get about section - FIXED: Get the active one
+        about_section = AboutSection.objects.filter(is_active=True).first()
+        
+        # Get services
+        services = Service.objects.filter(is_active=True).order_by('order')
+        
+        # Get impact results
+        results = ImpactResult.objects.filter(is_active=True).order_by('order')
+        
+        # Get gallery images
+        gallery_images = GalleryImage.objects.filter(is_active=True).order_by('order')
+        
+        # Get testimonials
+        testimonials = Testimonial.objects.filter(is_active=True).order_by('order')
+        
+        # Get newsletter content
+        newsletter = NewsletterContent.objects.filter(is_active=True).first()
+        
+        context = {
+            'site_settings': site_settings,
+            'hero_images': hero_images,
+            'about_section': about_section,
+            'services': services,
+            'results': results,
+            'gallery_images': gallery_images,
+            'testimonials': testimonials,
+            'newsletter': newsletter,
+        }
+        
+        return render(request, 'main/index.html', context)
+        
+    except Exception as e:
+        log_system_action(
+            f"Error in home view: {str(e)}",
+            level='error',
+            source='home_view',
+            request=request
+        )
+        # Return a simplified version if there's an error
+        return render(request, 'main/index.html', {})
+
+@csrf_exempt
+@require_POST
+def contact_submit(request):
+    """Handle contact form submission - SAVES TO DJANGO DATABASE"""
+    try:
+        data = json.loads(request.body)
+        
+        # Validate required fields
+        required_fields = ['full_name', 'email', 'organization', 'event_type', 'event_details']
+        for field in required_fields:
+            if not data.get(field):
+                return JsonResponse({
+                    'status': 'error',
+                    'message': f'{field.replace("_", " ").title()} is required.'
+                }, status=400)
+        
+        # Create contact submission in Django database
+        submission = ContactSubmission.objects.create(
+            full_name=data['full_name'],
+            email=data['email'],
+            organization=data['organization'],
+            event_type=data['event_type'],
+            event_details=data['event_details']
+        )
+        
+        # Log the submission
+        log_system_action(
+            f"New contact submission from {submission.full_name} ({submission.organization})",
+            level='success',
+            source='contact_form',
+            request=request
+        )
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Thank you for your booking request! Pamela will review your details and get back to you within 24 hours.',
+            'submission_id': submission.id
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Invalid request data.'
+        }, status=400)
+    except Exception as e:
+        log_system_action(
+            f"Contact submission error: {str(e)}",
+            level='error',
+            source='contact_form',
+            request=request
+        )
+        return JsonResponse({
+            'status': 'error',
+            'message': 'An error occurred. Please try again later.'
+        }, status=500)
+
+@csrf_exempt
+@require_POST
+def newsletter_submit(request):
+    """Handle newsletter subscription - SAVES TO DJANGO DATABASE"""
+    try:
+        data = json.loads(request.body)
+        
+        email = data.get('email', '').strip()
+        name = data.get('name', '').strip()
+        source = data.get('source', 'newsletter_section')
+        agreed_to_terms = data.get('agreed_to_terms', True)
+        
+        if not email:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Email is required.'
+            }, status=400)
+        
+        # Check if email already exists
+        if NewsletterSubscription.objects.filter(email=email).exists():
+            subscription = NewsletterSubscription.objects.get(email=email)
+            return JsonResponse({
+                'status': 'info',
+                'message': f'You are already subscribed to our newsletter! (Subscribed on {subscription.subscribed_at.strftime("%Y-%m-%d")})'
+            })
+        
+        # Create subscription in Django database
+        subscription = NewsletterSubscription.objects.create(
+            email=email,
+            name=name if name else email.split('@')[0],
+            source=source,
+            agreed_to_terms=agreed_to_terms,
             is_active=True
         )
-    
-    # Get about content or create default
-    about_content = AboutContent.objects.first()
-    if not about_content:
-        about_content = AboutContent.objects.create(
-            title="Pamela Robinson",
-            description="Pamela Robinson is a keynote speaker, corporate and leadership trainer, founder of Fusion Force and a recognized expert in sales and marketing support for hospitality companies.",
-            bullet_points="Keynote Speaker\nLeadership Trainer\nHospitality Expert\nGlobal Experience\nTrained by Les Brown\nAuthor of Leading with the Heart"
+        
+        # Log the subscription
+        log_system_action(
+            f"New newsletter subscription: {email}",
+            level='success',
+            source='newsletter_form',
+            request=request
         )
-    
-    # Get newsletter content or create default
-    newsletter_content = NewsletterContent.objects.first()
-    if not newsletter_content:
-        newsletter_content = NewsletterContent.objects.create(
-            title="Monthly Newsletter",
-            subtitle="Get exclusive insights and industry updates delivered to your inbox",
-            benefits="Leadership Strategies\nIndustry Updates\nCase Studies\nEvent Announcements\nExclusive Content\nSuccess Stories",
-            form_title="Join Our Community",
-            form_description="Get exclusive leadership insights, industry trends, and event updates delivered directly to your inbox each month."
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Thank you for subscribing to our newsletter!',
+            'subscription_id': subscription.id
+        })
+        
+    except IntegrityError:
+        return JsonResponse({
+            'status': 'info',
+            'message': 'You are already subscribed to our newsletter!'
+        })
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Invalid request data.'
+        }, status=400)
+    except Exception as e:
+        log_system_action(
+            f"Newsletter subscription error: {str(e)}",
+            level='error',
+            source='newsletter_form',
+            request=request
         )
-    
-    # Get all services
-    services = Service.objects.all()
-    
-    # Get gallery images
-    gallery_images = GalleryImage.objects.filter(
-        is_active=True
-    ).exclude(
-        image__isnull=True
-    ).exclude(
-        image=''
-    ).order_by('-display_order', '-created_at')
-    
-    # Get active testimonials
-    testimonials = Testimonial.objects.filter(is_active=True)
-    
-    # Get all events
-    events = Event.objects.all()
-    
-    # Duplicate testimonials for infinite slider effect
-    testimonial_list = list(testimonials)
-    
-    # If no testimonials in database, use defaults
-    if not testimonial_list:
-        testimonial_list = [
-            {
-                'client_name': 'Event Organizer',
-                'position': 'Event Organizer',
-                'company': 'IMEX America',
-                'content': 'Pamela doesn\'t just speak, she transforms. Her sessions ignite courage, clarity, and connection.',
-                'avatar': None,
-                'avatar_base64': None
-            },
-            {
-                'client_name': 'Vice President',
-                'position': 'Vice President of Sales',
-                'company': 'Luxury Hotel Group',
-                'content': 'Her energy is unmatched, our team left inspired and aligned.',
-                'avatar': None,
-                'avatar_base64': None
-            },
-            {
-                'client_name': 'Development Director',
-                'position': 'Development Director',
-                'company': 'Russian Hospitality Awards',
-                'content': 'Pamela was exceptionally well-spoken, engaging, and demonstrated a deep understanding of the hospitality industry.',
-                'avatar': None,
-                'avatar_base64': None
-            }
-        ]
-    
-    # Duplicate for infinite slider
-    duplicated_testimonials = testimonial_list * 2
-    
-    context = {
-        'home_content': home_content,
-        'about_content': about_content,
-        'services': services,
-        'testimonials': duplicated_testimonials,
-        'events': events,
-        'newsletter_content': newsletter_content,
-        'gallery_images': gallery_images,
-        'contact_form': ContactForm(),
-        'newsletter_form': NewsletterForm(initial={'source': 'newsletter_section'}),
-        'footer_newsletter_form': NewsletterForm(initial={'source': 'footer'}),
-    }
-    
-    return render(request, 'main/index.html', context)
+        return JsonResponse({
+            'status': 'error',
+            'message': 'An error occurred. Please try again later.'
+        }, status=500)
 
-def contact_submit(request):
-    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        try:
-            data = json.loads(request.body)
-            form = ContactForm(data)
-            
-            if form.is_valid():
-                contact = form.save()
-                log_action(
-                    f"New contact form submission: {contact.full_name} from {contact.organization}",
-                    level='success',
-                    source='contact_submit',
-                    request=request
-                )
-                return JsonResponse({
-                    'status': 'success',
-                    'message': 'Thank you for your booking request! We\'ll contact you within 24 hours.'
-                })
-            else:
-                errors = {field: str(error) for field, error in form.errors.items()}
-                log_action(
-                    f"Contact form validation failed: {errors}",
-                    level='warning',
-                    source='contact_submit',
-                    request=request
-                )
-                return JsonResponse({
-                    'status': 'error',
-                    'message': 'Please fill all required fields correctly.',
-                    'errors': errors
-                }, status=400)
-                
-        except Exception as e:
-            log_action(
-                f"Contact form submission error: {str(e)}",
-                level='error',
-                source='contact_submit',
-                request=request
-            )
-            return JsonResponse({
-                'status': 'error',
-                'message': 'An error occurred. Please try again later.'
-            }, status=500)
-    
-    return JsonResponse({
-        'status': 'error',
-        'message': 'Invalid request method.'
-    }, status=405)
-
-def newsletter_submit(request):
-    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        try:
-            data = json.loads(request.body)
-            
-            # Check if email already exists
-            email = data.get('email')
-            if NewsletterSubscription.objects.filter(email=email).exists():
-                log_action(
-                    f"Duplicate newsletter subscription attempt: {email}",
-                    level='warning',
-                    source='newsletter_submit',
-                    request=request
-                )
-                return JsonResponse({
-                    'status': 'info',
-                    'message': 'You are already subscribed to our newsletter!'
-                })
-            
-            form = NewsletterForm(data)
-            
-            if form.is_valid():
-                subscription = form.save()
-                log_action(
-                    f"New newsletter subscription: {subscription.email} from {subscription.get_source_display()}",
-                    level='success',
-                    source='newsletter_submit',
-                    request=request
-                )
-                return JsonResponse({
-                    'status': 'success',
-                    'message': 'Thank you for subscribing to our newsletter!'
-                })
-            else:
-                errors = {field: str(error) for field, error in form.errors.items()}
-                log_action(
-                    f"Newsletter form validation failed: {errors}",
-                    level='warning',
-                    source='newsletter_submit',
-                    request=request
-                )
-                return JsonResponse({
-                    'status': 'error',
-                    'message': 'Please provide a valid email address.',
-                    'errors': errors
-                }, status=400)
-                
-        except Exception as e:
-            log_action(
-                f"Newsletter submission error: {str(e)}",
-                level='error',
-                source='newsletter_submit',
-                request=request
-            )
-            return JsonResponse({
-                'status': 'error',
-                'message': 'An error occurred. Please try again later.'
-            }, status=500)
-    
-    return JsonResponse({
-        'status': 'error',
-        'message': 'Invalid request method.'
-    }, status=405)
-
-def about(request):
-    about_content = AboutContent.objects.first()
-    if not about_content:
-        about_content = AboutContent.objects.create(
-            title="Pamela Robinson",
-            description="Pamela Robinson is a keynote speaker, corporate and leadership trainer, founder of Fusion Force and a recognized expert in sales and marketing support for hospitality companies.",
-            bullet_points="Keynote Speaker\nLeadership Trainer\nHospitality Expert\nGlobal Experience"
+@csrf_exempt
+@require_POST
+def form_submit_webhook(request):
+    """Webhook to receive form submissions from FormSubmit (optional backup)"""
+    try:
+        data = json.loads(request.body)
+        
+        # This is a backup in case JavaScript fails
+        # You can process FormSubmit data here if needed
+        
+        log_system_action(
+            f"FormSubmit webhook received: {data.get('_subject', 'Unknown')}",
+            level='info',
+            source='formsubmit_webhook',
+            request=request
         )
-    return render(request, 'main/about.html', {'about_content': about_content})
+        
+        return JsonResponse({'status': 'success'})
+        
+    except Exception as e:
+        log_system_action(
+            f"FormSubmit webhook error: {str(e)}",
+            level='error',
+            source='formsubmit_webhook',
+            request=request
+        )
+        return JsonResponse({'status': 'error'}, status=500)
+
+# ============ SIMPLE PAGE VIEWS ============
+def about_page(request):
+    """About page view"""
+    about_section = AboutSection.objects.filter(is_active=True).first()
+    return render(request, 'main/about.html', {'about_section': about_section})
+
+def services_page(request):
+    """Services page view"""
+    services = Service.objects.filter(is_active=True).order_by('order')
+    return render(request, 'main/services.html', {'services': services})
+
+def gallery_page(request):
+    """Gallery page view"""
+    gallery_images = GalleryImage.objects.filter(is_active=True).order_by('order')
+    return render(request, 'main/gallery.html', {'gallery_images': gallery_images})
+
+def testimonials_page(request):
+    """Testimonials page view"""
+    testimonials = Testimonial.objects.filter(is_active=True).order_by('order')
+    return render(request, 'main/testimonials.html', {'testimonials': testimonials})
 
 def contact_page(request):
-    contact_form = ContactForm()
-    return render(request, 'main/contact.html', {'contact_form': contact_form})
+    """Contact page view"""
+    return render(request, 'main/contact.html')
 
-def team(request):
-    return render(request, 'main/team.html')
-
-def testimonial_view(request):
-    testimonials = Testimonial.objects.filter(is_active=True)
-    return render(request, 'main/testimonial.html', {'testimonials': testimonials})
-
-def courses(request):
-    services = Service.objects.all()
-    return render(request, 'main/courses.html', {'services': services})
-
-def page_not_found(request, exception):
+def handler404(request, exception):
+    """404 error handler"""
     return render(request, 'main/404.html', status=404)
+
+def handler500(request):
+    """500 error handler"""
+    return render(request, 'main/500.html', status=500)

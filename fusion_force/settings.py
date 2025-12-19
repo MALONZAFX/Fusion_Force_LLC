@@ -1,63 +1,112 @@
-﻿import os
+﻿# settings.py
+import os
 from pathlib import Path
 import dj_database_url
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ========== RAILWAY CONFIGURATION ==========
-# Railway provides DATABASE_URL automatically
+# ========== SECURITY ==========
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-dev-key-12345')
+
+# ========== DATABASE CONFIGURATION ==========
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
-# If DATABASE_URL exists (Railway production), use PostgreSQL
-# If not, use SQLite (local development)
-if DATABASE_URL:
-    # Railway PostgreSQL
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
-    # Production settings
-    DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
-    ALLOWED_HOSTS = ['*']  # Railway handles domains
+if DATABASE_URL and DATABASE_URL.startswith('postgresql://'):
+    # PRODUCTION: PostgreSQL on Railway
+    print("🔵 Using PostgreSQL (Railway/Production)")
     
-    # Security for production
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    # Parse the database URL
+    db_config = dj_database_url.parse(DATABASE_URL)
+    
+    # Add PostgreSQL-specific options
+    db_config.update({
+        'CONN_MAX_AGE': 600,
+        'CONN_HEALTH_CHECKS': True,
+        'OPTIONS': {
+            'connect_timeout': 10,
+            'keepalives_idle': 60,
+            'keepalives_interval': 10,
+            'keepalives_count': 5,
+            'sslmode': 'require',
+        }
+    })
+    
+    DATABASES = {
+        'default': db_config
+    }
 else:
-    # Local SQLite development
+    # DEVELOPMENT: SQLite locally
+    print("🟢 Using SQLite (Local Development)")
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-    DEBUG = True
-    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key-change-on-railway')
+# ========== DEBUG & HOSTS ==========
+# Check environment
+ON_RAILWAY = os.environ.get('RAILWAY', False)
+IS_PRODUCTION = bool(DATABASE_URL and DATABASE_URL.startswith('postgresql://'))
 
-# Application definition
+if ON_RAILWAY or IS_PRODUCTION:
+    # Production settings
+    DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+    ALLOWED_HOSTS = ['*']
+    CSRF_TRUSTED_ORIGINS = [
+        'https://*.up.railway.app',
+        'https://*.railway.app',
+    ]
+    
+    # Security settings
+    if not DEBUG:
+        SECURE_SSL_REDIRECT = True
+        SESSION_COOKIE_SECURE = True
+        CSRF_COOKIE_SECURE = True
+        SECURE_BROWSER_XSS_FILTER = True
+        SECURE_CONTENT_TYPE_NOSNIFF = True
+        SECURE_HSTS_SECONDS = 31536000
+        SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+        SECURE_HSTS_PRELOAD = True
+        SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    else:
+        SECURE_SSL_REDIRECT = False
+        SESSION_COOKIE_SECURE = False
+        CSRF_COOKIE_SECURE = False
+    
+    USE_X_FORWARDED_HOST = True
+    USE_X_FORWARDED_PORT = True
+else:
+    # Local development settings
+    DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+    
+    # Disable security for local
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    SECURE_HSTS_SECONDS = 0
+
+# ========== APPLICATION DEFINITION ==========
 INSTALLED_APPS = [
-    'main',
+    'main.apps.MainConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'whitenoise.runserver_nostatic',  # For Railway static files
+    'whitenoise.runserver_nostatic',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # MUST BE HERE for Railway
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -86,57 +135,32 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'fusion_force.wsgi.application'
 
-# Password validation
+# ========== PASSWORD VALIDATION ==========
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Internationalization
+# ========== INTERNATIONALIZATION ==========
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# ========== STATIC FILES FOR RAILWAY ==========
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # Railway will serve from here
+# ========== STATIC & MEDIA FILES ==========
+STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
-
-# WhiteNoise configuration for Railway
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files (uploads)
-MEDIA_URL = '/media/'
+MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Default primary key field type
+# ========== DEFAULT PRIMARY KEY ==========
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Custom admin settings
+# ========== CUSTOM ADMIN SETTINGS ==========
 ADMIN_SITE_HEADER = "FUSION-FORCE ADMIN"
 ADMIN_SITE_TITLE = "Fusion Force Administration"
-
-# ========== ADD THESE FOR BETTER RAILWAY PERFORMANCE ==========
-# File upload settings
-FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
-DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
-
-# WhiteNoise specific settings
-WHITENOISE_USE_FINDERS = True
-WHITENOISE_MANIFEST_STRICT = False
-WHITENOISE_AUTOREFRESH = DEBUG  # Auto-refresh in development
-SECURE_SSL_REDIRECT = False
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
-SECURE_PROXY_SSL_HEADER = None
