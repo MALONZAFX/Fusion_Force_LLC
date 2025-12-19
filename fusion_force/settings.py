@@ -152,11 +152,16 @@ USE_TZ = True
 # ========== STATIC & MEDIA FILES ==========
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_DIRS = [BASE_DIR / 'static']  # Only if this directory exists!
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Only use WhiteNoise storage in production
+if ON_RAILWAY or IS_PRODUCTION:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+else:
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 # ========== DEFAULT PRIMARY KEY ==========
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

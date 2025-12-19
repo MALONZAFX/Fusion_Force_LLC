@@ -1,12 +1,8 @@
 {
     "build": {
-      "builder": "NIXPACKS",
-      "buildCommand": "pip install -r requirements.txt"
+      "builder": "NIXPACKS"
     },
     "deploy": {
-      "startCommand": "python manage.py migrate && gunicorn fusion_force.wsgi:application --bind 0.0.0.0:$PORT",
-      "restartPolicyType": "ALWAYS",
-      "healthcheckPath": "/admin/login/",
-      "healthcheckTimeout": 60
+      "startCommand": "python manage.py collectstatic --noinput && python manage.py migrate && gunicorn fusion_force.wsgi"
     }
   }
