@@ -1,46 +1,18 @@
-# Dockerfile - Optimized for Railway deployment
+# Dockerfile - DEBUG VERSION
 FROM python:3.11-slim-bookworm
 
-# Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
-
-# Set work directory
+ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
-# Install system dependencies with proper cleanup
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        gcc \
-        libpq-dev \
-        postgresql-client \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install Python dependencies
+# Copy requirements first for better caching
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy project
+# Copy app
 COPY . .
 
-# Collect static files during build
-RUN python manage.py collectstatic --noinput
+# Create a simple test Python script
+RUN echo 'import os\nimport sys\nsys.path.insert(0, "/app")\n\nfrom django.core.wsgi import get_wsgi_application\nos.environ.setdefault("DJANGO_SETTINGS_MODULE", "fusion_force.settings")\napplication = get_wsgi_application()\n\n# Simple HTTP server for testing\nfrom http.server import HTTPServer, BaseHTTPRequestHandler\nclass Handler(BaseHTTPRequestHandler):\n    def do_GET(self):\n        self.send_response(200)\n        self.end_headers()\n        self.wfile.write(b"DEBUG: App is working!")\n\nPORT = int(os.getenv("PORT", 8080))\nprint(f"Starting debug server on port {PORT}")\nHTTPServer(("0.0.0.0", PORT), Handler).serve_forever()' > /app/debug_server.py
 
-# Create non-root user for security (optional but recommended)
-RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
-USER appuser
-
-# Health check (for Railway health monitoring)
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:$PORT/health/', timeout=2)"
-
-# Run migrations and start gunicorn
-CMD python manage.py migrate --noinput && \
-    gunicorn fusion_force.wsgi:application \
-    --bind 0.0.0.0:$PORT \
-    --workers 3 \
-    --worker-class sync \
-    --timeout 120 \
-    --access-logfile -
+# Start with simple Python server first
+CMD python /app/debug_server.py
