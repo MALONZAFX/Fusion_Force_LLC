@@ -5,8 +5,8 @@ from django.conf.urls.static import static
 from main import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('', views.home, name='home'),
+    path('about/', views.about_page, name='about'),
     
     # API endpoints for form submissions
     path('api/contact-submit/', views.contact_submit, name='contact_submit'),

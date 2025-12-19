@@ -18,8 +18,8 @@ db.sqlite3
 db.sqlite3-journal
 
 # Static/media
-/staticfiles/
-/media/
+#/staticfiles/
+#/media/
 
 # IDE
 .vscode/
