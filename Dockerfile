@@ -1,13 +1,19 @@
 FROM python:3.11-slim-bookworm
 
 WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+
 COPY . .
 
-# Remove the infinite loop script - Railway will use its own command
-# Just expose the port
-EXPOSE 8000
+# Collect static files during build
+RUN python manage.py collectstatic --noinput
 
-# Default command (Railway will override with its startCommand)
-CMD ["gunicorn", "fusion_force.wsgi:application", "--bind", "0.0.0.0:8000"]
+# No CMD here - Railway will use its startCommand
