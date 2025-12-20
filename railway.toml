@@ -1,5 +1,4 @@
 [build]
-builder = "nixpacks"
+builder = "dockerfile"
 
-[deploy]
-startCommand = "./start.sh"
+# No startCommand needed if Dockerfile has CMD
