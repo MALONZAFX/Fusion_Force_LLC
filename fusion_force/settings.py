@@ -7,6 +7,13 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+
+# Fix for Railway
+if 'PORT' in os.environ:
+    # This forces Django to use the Railway PORT
+    from django.core.management.commands.runserver import Command as runserver
+    runserver.default_port = os.environ['PORT']
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 

@@ -1,4 +1,0 @@
-[build]
-builder = "dockerfile"
-
-# No startCommand needed if Dockerfile has CMD

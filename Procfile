@@ -1,2 +1,2 @@
-web: gunicorn fusion_force.wsgi:application --bind 0.0.0.0:$PORT --workers 2
+web: ./start_forced.sh
 release: python manage.py migrate
