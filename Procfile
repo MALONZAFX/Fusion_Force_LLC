@@ -1,2 +1,2 @@
+web: gunicorn fusion_force.wsgi --bind 0.0.0.0:$PORT --workers 3 --threads 2 --timeout 120
 release: python manage.py migrate --noinput
-web: python manage.py collectstatic --noinput && gunicorn fusion_force.wsgi:application --bind 0.0.0.0:$PORT
