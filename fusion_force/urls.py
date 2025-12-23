@@ -21,7 +21,7 @@ def health_check(request):
 
 urlpatterns = [
     # THIS LINE IS CRITICAL
-    path('health/', health_check, name='health-check'),
+   path('health', health_check, name='health-check'), 
     
     # Your existing URLs
     path('admin/', admin.site.urls),
