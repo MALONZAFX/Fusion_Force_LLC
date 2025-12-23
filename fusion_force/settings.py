@@ -58,7 +58,7 @@ else:
 
 # ========== DEBUG & HOSTS ==========
 # Check environment
-ON_RAILWAY = os.environ.get('RAILWAY', False)
+ON_RAILWAY = 'RAILWAY' in os.environ or 'RAILWAY_ENVIRONMENT' in os.environ or 'RAILWAY_GIT_COMMIT_SHA' in os.environ
 IS_PRODUCTION = bool(DATABASE_URL and DATABASE_URL.startswith('postgresql://'))
 
 if ON_RAILWAY or IS_PRODUCTION:
