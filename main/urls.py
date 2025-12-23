@@ -7,14 +7,9 @@ from main import views
 urlpatterns = [
     path('', views.home, name='home'),
     path('about/', views.about_page, name='about'),
-    
-    # API endpoints for form submissions
     path('api/contact-submit/', views.contact_submit, name='contact_submit'),
     path('api/newsletter-submit/', views.newsletter_submit, name='newsletter_submit'),
     path('api/formsubmit-webhook/', views.form_submit_webhook, name='formsubmit_webhook'),
-    
-    # Other pages
-    path('about/', views.about_page, name='about'),
     path('services/', views.services_page, name='services'),
     path('gallery/', views.gallery_page, name='gallery'),
     path('testimonials/', views.testimonials_page, name='testimonials'),
