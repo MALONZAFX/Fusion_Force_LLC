@@ -1,2 +1,2 @@
-web: python -c "import os; print('PORT:', os.environ.get('PORT')); print('SECRET_KEY exists:', 'SECRET_KEY' in os.environ)" && gunicorn fusion_force.wsgi --bind 0.0.0.0:$PORT --workers 1 --timeout 30 --log-level debug
+web: python manage.py collectstatic --noinput && gunicorn fusion_force.wsgi --bind 0.0.0.0:$PORT --workers 2 --timeout 120 --access-logfile -
 release: python manage.py migrate --noinput
